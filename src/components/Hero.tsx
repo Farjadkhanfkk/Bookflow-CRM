@@ -84,10 +84,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
               {/* Main Visual Image Card */}
-              <div className="relative rounded-3xl overflow-hidden shadow-xl border border-[#F0EDE8] aspect-4/5 bg-stone-100">
+              <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-stone-100 border border-stone-200/60">
                 <img
-                  src="https://images.unsplash.com/photo-1512290900672-1f5be673b063?auto=format&fit=crop&w=1200&q=80"
-                  alt="Lumina Med Spa tranquil aesthetic treatment room"
+                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
+                  alt="Lumina Med Spa"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center transform hover:scale-102 transition-transform duration-700"
                 />
@@ -95,45 +95,42 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 {/* Soft gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1A1C1A]/85 via-[#1A1C1A]/25 to-transparent" />
 
-                {/* Bottom Card Overlay Content */}
-                <div className="absolute bottom-0 inset-x-0 p-6 text-white space-y-2">
+                {/* Bottom Overlay Card */}
+                <div className="absolute bottom-6 left-6 right-6 z-20 bg-stone-900/60 backdrop-blur-md p-5 rounded-2xl text-white border border-white/10">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8B9D83] text-white text-xs font-medium uppercase tracking-wider">
                     <Sparkles className="w-3 h-3" />
-                    Signature Treatment
+                    # SIGNATURE TREATMENT
                   </div>
-                  <h2 className="text-xl font-serif font-light text-white">
+                  <h2 className="text-xl font-serif font-light text-white mt-2">
                     Platinum HydraFacial® & Clinical Peels
                   </h2>
-                  <p className="text-xs text-stone-200 line-clamp-2 leading-relaxed font-light">
+                  <p className="text-xs text-stone-200 line-clamp-2 leading-relaxed font-light mt-1">
                     Deep lymphatic detoxification, vortex acid infusion, and collagen LED therapy with Sarah Jenkins & Dr. Emma Harrison.
                   </p>
                 </div>
               </div>
 
-              {/* Floating Badge 1: Team Availability Live Indicator */}
-              <div className="absolute -top-4 -left-4 sm:-left-6 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-lg border border-[#F0EDE8] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2">
-                <div className="relative">
-                  <img
-                    src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=200&q=80"
-                    alt="Dr. Emma Harrison"
-                    referrerPolicy="no-referrer"
-                    className="w-11 h-11 rounded-full object-cover border border-[#8B9D83]"
-                  />
-                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#8B9D83] border-2 border-white rounded-full" />
-                </div>
-                <div className="text-left pr-2">
+              {/* Top-Left Floating Badge: Dr. Emma Harrison */}
+              <div className="absolute -top-4 -left-4 sm:-left-6 z-20 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-stone-100 flex items-center gap-3">
+                <img
+                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=200&q=80"
+                  alt="Dr. Emma Harrison"
+                  referrerPolicy="no-referrer"
+                  className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/20"
+                />
+                <div className="text-left">
                   <div className="flex items-center gap-1">
-                    <span className="text-xs font-semibold text-[#1A1C1A]">Dr. Emma Harrison</span>
-                    <span className="text-[10px] text-[#8B9D83] font-medium bg-[#F5F7F4] px-1.5 py-0.5 rounded-full border border-[#F0EDE8]">MD</span>
+                    <span className="text-xs font-semibold text-[#1A1C1A]">Dr. Emma Harrison, MD</span>
                   </div>
                   <p className="text-[11px] text-[#8B9D83] font-medium flex items-center gap-1 mt-0.5">
-                    <Clock className="w-3 h-3" /> Slots Open This Week
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Slots Open This Week
                   </p>
                 </div>
               </div>
 
-              {/* Floating Badge 2: Lead Aesthetician Sarah */}
-              <div className="absolute -bottom-5 -right-4 sm:-right-6 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-lg border border-[#F0EDE8] flex items-center gap-3">
+              {/* Bottom-Right Floating Pill */}
+              <div className="absolute -bottom-4 -right-4 z-20 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-stone-100 flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-[#F5F7F4] text-[#8B9D83]">
                   <Heart className="w-5 h-5 fill-[#8B9D83]/20 text-[#8B9D83]" />
                 </div>
