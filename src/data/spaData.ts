@@ -68,7 +68,7 @@ export const SERVICES: Service[] = [
       "Smoothes rough texture and refines enlarged pores",
       "Includes take-home post-peel recovery serum kit"
     ],
-    image: "https://images.unsplash.com/photo-1512290900672-1f5be673b063?auto=format&fit=crop&w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1512290903671-5a2a22283935?auto=format&fit=crop&w=1000&q=80",
     popular: true,
     featured: true,
     procedureSteps: [
@@ -124,7 +124,7 @@ export const SERVICES: Service[] = [
       "Results appear in 3–7 days and last 3–5 months",
       "Complimentary 2-week touch-up assessment"
     ],
-    image: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80",
     popular: true,
     featured: true,
     procedureSteps: [
@@ -267,7 +267,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     credentials: "LE, CLT, Master HydraFacial Specialist",
     experience: "11+ Years Experience",
     bio: "Sarah is our celebrated master aesthetician with over a decade of clinical experience in medical peels, laser resurfacing, and stubborn pigment correction. Her holistic skin consultations have transformed thousands of complex acne and melasma conditions.",
-    avatar: "https://images.unsplash.com/photo-1594824813576-92c46f1406e6?auto=format&fit=crop&w=800&q=80",
+    avatar: "https://images.unsplash.com/photo-1594824813511-208cb21ec68a?auto=format&fit=crop&w=800&q=80",
     specialties: ["Platinum HydraFacial® MD", "Medical Chemical Peels", "Melasma & Pigment Erase", "Barrier Repair Therapy"],
     favoriteTreatment: "Medical Chemical Peel with bespoke peptide layering",
     quote: "Healthy, glowing skin is a marathon of consistency, tailored science, and gentle, loving care.",

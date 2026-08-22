@@ -17,6 +17,8 @@ interface ConcernOption {
   iconName: string;
 }
 
+const FALLBACK_IMAGE = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" fill="%23E5E2DD"><rect width="200" height="200"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%238B9D83" font-size="40">✦</text></svg>';
+
 const CONCERNS: ConcernOption[] = [
   {
     id: 'pores-dullness',
@@ -140,14 +142,15 @@ export const TreatmentMatcher: React.FC<TreatmentMatcherProps> = ({
 
                 {/* Treatment Details */}
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 my-6 items-center">
-                  <div className="sm:col-span-4 aspect-4/3 sm:aspect-square rounded-2xl overflow-hidden bg-stone-100 border border-[#F0EDE8]">
-                    <img
-                      src={matchedService.image}
-                      alt={matchedService.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                 <div className="sm:col-span-4 relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200">
+                   <img
+                     src={matchedService.image}
+                     alt={matchedService.name}
+                     referrerPolicy="no-referrer"
+                     onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
+                     className="w-full h-full object-cover"
+                   />
+                 </div>
 
                   <div className="sm:col-span-8 space-y-2">
                     <div className="flex items-baseline justify-between">
@@ -170,7 +173,8 @@ export const TreatmentMatcher: React.FC<TreatmentMatcherProps> = ({
                           src={matchedSpecialist.avatar}
                           alt={matchedSpecialist.name}
                           referrerPolicy="no-referrer"
-                          className="w-7 h-7 rounded-full object-cover border border-[#8B9D83]"
+                          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
+                          className="w-7 h-7 rounded-full object-cover ring-1 ring-stone-200"
                         />
                         <span>
                           Recommended Specialist: <strong className="text-[#1A1C1A]">{matchedSpecialist.name}</strong> ({matchedSpecialist.role})
