@@ -37,7 +37,7 @@ const PROTOCOLS: Protocol[] = [
     id: 'sun-damage',
     title: 'Medical-Grade Chemical Peel',
     description: 'Customized clinical acid formulation to dramatically resurface sun damage & hyperpigmentation.',
-    image: 'https://images.unsplash.com/photo-1512290903671-17adc8174f88?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
     duration: '45 min',
     downtime: '2–4 Days (Gentle Flaking)',
     price: '$225',
@@ -71,7 +71,7 @@ const PROTOCOLS: Protocol[] = [
     id: 'forehead-lines',
     title: 'Physician-Led Botox® & Dysport®',
     description: 'Subtle, natural-looking muscle relaxation that preserves your expressive grace and movement.',
-    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80',
     duration: '30 min',
     downtime: 'Zero (Lunchtime Procedure)',
     price: '$14 / unit',
@@ -158,6 +158,9 @@ export const SkinMatcher: React.FC<SkinMatcherProps> = ({
                   src={selectedProtocol.image}
                   alt={selectedProtocol.title}
                   className="w-full md:w-56 h-52 md:h-56 rounded-2xl overflow-hidden shrink-0 bg-stone-100 border border-stone-200 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80';
+                  }}
                 />
                 <div className="flex-1 min-w-0 w-full flex flex-col justify-between">
                   <div>

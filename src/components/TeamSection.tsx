@@ -19,7 +19,7 @@ const TEAM_MEMBERS = [
   {
     name: "Sarah Jenkins, LE, CLT",
     role: "Lead Clinical Aesthetician & Laser Specialist",
-    image: "https://images.unsplash.com/photo-1594824813597-5a2a22283935?auto=format&fit=crop&w=400&q=80",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
     education: "CIDESCO International Diplomat • Certified Laser Technician (CLT)",
     quote: "Healthy, luminous skin is built on cellular integrity, clinical actives, and meticulous barrier care.",
     specialties: ["Platinum HydraFacial®", "Medical-Grade Chemical Peels", "RF Microneedling"],
@@ -72,12 +72,15 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
               <div>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-[#F0EDE8]">
                   <div className="relative shrink-0">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      referrerPolicy="no-referrer"
-                      className="w-20 h-20 rounded-2xl object-cover shadow-sm ring-1 ring-stone-200"
-                    />
+                     <img
+                       src={member.image}
+                       alt={member.name}
+                       referrerPolicy="no-referrer"
+                       className="w-20 h-20 rounded-2xl object-cover shadow-sm ring-1 ring-stone-200"
+                       onError={(e) => {
+                         e.currentTarget.src = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80';
+                       }}
+                     />
                     <span className="absolute -bottom-2 -right-2 bg-[#1A1C1A] text-[#8B9D83] p-1.5 rounded-xl border border-[#8B9D83]/40 shadow-xs">
                       <ShieldCheck className="w-4 h-4" />
                     </span>
@@ -151,12 +154,15 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
             >
               <div>
                 <div className="flex items-center gap-4 pb-4 border-b border-[#F0EDE8]">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    referrerPolicy="no-referrer"
-                    className="w-20 h-20 rounded-2xl object-cover shadow-sm ring-1 ring-stone-200"
-                  />
+                   <img
+                     src={member.image}
+                     alt={member.name}
+                     referrerPolicy="no-referrer"
+                     className="w-20 h-20 rounded-2xl object-cover shadow-sm ring-1 ring-stone-200"
+                     onError={(e) => {
+                       e.currentTarget.src = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80';
+                     }}
+                   />
                   <div>
                     <span className="text-[10px] uppercase font-semibold text-[#8B9D83] bg-[#F5F7F4] px-2 py-0.5 rounded-full border border-[#F0EDE8]">
                       {member.role}
