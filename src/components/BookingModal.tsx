@@ -15,14 +15,149 @@ interface BookingModalProps {
   initialSpecialistId?: string;
 }
 
+const FALLBACK_SERVICES: Service[] = [
+  {
+    id: 'hydrafacial-platinum',
+    name: 'Platinum HydraFacial® MD',
+    price: '$295',
+    tagline: 'Vortex-infusion deep cleanse, painless extractions, peptide infusion & LED light therapy.',
+    description: 'The ultimate 6-step medical facial experience.',
+    duration: '60 min',
+    downtime: 'Zero (Instant Glow)',
+    category: 'facials',
+    idealFor: [],
+    benefits: [],
+    image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
+    popular: true,
+    featured: true,
+    procedureSteps: [],
+    startingPriceNumber: 295
+  },
+  {
+    id: 'medical-chemical-peel',
+    name: 'Medical-Grade Chemical Peel',
+    price: '$225',
+    tagline: 'Customized clinical acid formulation to dramatically resurface sun damage & hyperpigmentation.',
+    description: 'Formulated specifically for your unique skin barrier.',
+    duration: '45 min',
+    downtime: '2–4 Days (Gentle Flaking)',
+    category: 'facials',
+    idealFor: [],
+    benefits: [],
+    image: 'https://images.unsplash.com/photo-1512290903671-17adc8174f88?auto=format&fit=crop&w=800&q=80',
+    popular: true,
+    featured: true,
+    procedureSteps: [],
+    startingPriceNumber: 225
+  },
+  {
+    id: 'rf-microneedling',
+    name: 'Morpheus8 RF Microneedling',
+    price: '$650',
+    tagline: 'Subdermal fractional radiofrequency to tighten, sculpt, and rebuild elastin.',
+    description: 'Combining ultra-fine insulated microneedles with targeted radiofrequency energy.',
+    duration: '75 min',
+    downtime: '24–48 Hours (Mild Pinkness)',
+    category: 'lasers',
+    idealFor: [],
+    benefits: [],
+    image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80',
+    popular: true,
+    featured: true,
+    procedureSteps: [],
+    startingPriceNumber: 650
+  },
+  {
+    id: 'precision-botox-injectables',
+    name: 'Physician-Led Botox® & Dysport®',
+    price: '$14 / unit',
+    tagline: 'Subtle, natural-looking muscle relaxation that preserves your expressive grace.',
+    description: 'Administered exclusively by Dr. Emma Harrison and certified nurse injectors.',
+    duration: '30 min',
+    downtime: 'Zero (Lunchtime Procedure)',
+    category: 'injectables',
+    idealFor: [],
+    benefits: [],
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
+    popular: true,
+    featured: true,
+    procedureSteps: [],
+    startingPriceNumber: 280
+  }
+];
+
+const FALLBACK_TEAM: TeamMember[] = [
+  {
+    id: 'dr-emma-harrison',
+    name: 'Dr. Emma Harrison, MD',
+    title: 'Medical Director & Board-Certified Dermatologist',
+    role: 'Physician & Founder',
+    credentials: 'MD, FAAD, Board-Certified',
+    experience: '16+ Years Experience',
+    bio: '',
+    avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
+    specialties: [],
+    favoriteTreatment: '',
+    quote: '',
+    education: ''
+  },
+  {
+    id: 'sarah-jenkins',
+    name: 'Sarah Jenkins, LE, CLT',
+    title: 'Lead Clinical Aesthetician & Laser Specialist',
+    role: 'Master Aesthetician',
+    credentials: 'LE, CLT, Master HydraFacial Specialist',
+    experience: '11+ Years Experience',
+    bio: '',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
+    specialties: [],
+    favoriteTreatment: '',
+    quote: '',
+    education: ''
+  },
+  {
+    id: 'michael-chang',
+    name: 'Michael Chang, RN, BSN',
+    title: 'Aesthetic Injector & Micro-Cannula Specialist',
+    role: 'Injectables Specialist',
+    credentials: 'RN, BSN, CANS Certified',
+    experience: '8+ Years Experience',
+    bio: '',
+    avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+    specialties: [],
+    favoriteTreatment: '',
+    quote: '',
+    education: ''
+  },
+  {
+    id: 'elena-vancet',
+    name: 'Elena Vancet, LMT, CCE',
+    title: 'Master Body Contouring & Lymphatic Specialist',
+    role: 'Wellness & Lymphatic Expert',
+    credentials: 'LMT, Vodder Certified Lymphatic Specialist',
+    experience: '9+ Years Experience',
+    bio: '',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    specialties: [],
+    favoriteTreatment: '',
+    quote: '',
+    education: ''
+  }
+];
+
+const FALLBACK_TIME_SLOTS = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM'];
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
   initialServiceId,
   initialSpecialistId,
 }) => {
+  const safeServices = SERVICES && SERVICES.length > 0 ? SERVICES : FALLBACK_SERVICES;
+  const safeTeam = TEAM_MEMBERS && TEAM_MEMBERS.length > 0 ? TEAM_MEMBERS : FALLBACK_TEAM;
+
   const [step, setStep] = useState<number>(1);
-  const [selectedServiceId, setSelectedServiceId] = useState<string>(initialServiceId || SERVICES[0].id);
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(initialServiceId || safeServices[0]?.id || '');
   const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>(initialSpecialistId || 'any');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
@@ -41,13 +176,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Reset or update selections when props change
   useEffect(() => {
-    if (initialServiceId) {
+    if (initialServiceId && safeServices.some((s) => s.id === initialServiceId)) {
       setSelectedServiceId(initialServiceId);
     }
-    if (initialSpecialistId) {
+    if (initialSpecialistId && (initialSpecialistId === 'any' || safeTeam.some((t) => t.id === initialSpecialistId))) {
       setSelectedSpecialistId(initialSpecialistId);
     }
-  }, [initialServiceId, initialSpecialistId]);
+  }, [initialServiceId, initialSpecialistId, safeServices, safeTeam]);
 
   // Generate mock available dates for the next 7 days
   const dateOptions = [
@@ -68,14 +203,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setSelectedDate(dateOptions[0].dateStr);
     }
     if (!selectedTimeSlot && timeSlots.length > 0) {
-      setSelectedTimeSlot(timeSlots[1]);
+      setSelectedTimeSlot(timeSlots[Math.min(1, timeSlots.length - 1)]);
     }
   }, []);
 
   if (!isOpen) return null;
 
-  const currentService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
-  const currentSpecialist = TEAM_MEMBERS.find((t) => t.id === selectedSpecialistId);
+  const currentService = safeServices.find((s) => s.id === selectedServiceId) || safeServices[0];
+  const currentSpecialist = safeTeam.find((t) => t.id === selectedSpecialistId);
 
   const validateStep4 = () => {
     const errors: { [key: string]: string } = {};
@@ -93,6 +228,29 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   const [loading, setLoading] = useState(false);
+
+  function toISODateTime(dateStr: string, timeStr: string): string {
+    try {
+      const now = new Date();
+      let hours = 9;
+      let minutes = 0;
+      if (timeStr) {
+        const isPM = /pm/i.test(timeStr);
+        const isAM = /am/i.test(timeStr);
+        const cleanTime = timeStr.replace(/am|pm/i, '').trim();
+        const parts = cleanTime.split(':');
+        hours = parseInt(parts[0] || '9', 10);
+        minutes = parseInt(parts[1] || '0', 10);
+        if (isPM && hours < 12) hours += 12;
+        if (isAM && hours === 12) hours = 0;
+      }
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const isoStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(hours)}:${pad(minutes)}:00`;
+      return isoStr;
+    } catch {
+      return new Date().toISOString();
+    }
+  }
 
   const handleConfirmBooking = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,9 +288,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       }
 
       // 2. Insert Appointment
-      // Note: mapping 'any' to null for staff_id
       const staffId = selectedSpecialistId === 'any' ? null : selectedSpecialistId;
-      
+      const appointmentTime = toISODateTime(selectedDate, selectedTimeSlot);
+
       const { data: appointment, error: appointmentError } = await supabase
         .from('appointments')
         .insert([
@@ -140,7 +298,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             customer_id: customerId,
             service_id: selectedServiceId,
             staff_id: staffId,
-            appointment_time: `${selectedDate} ${selectedTimeSlot}`, 
+            appointment_time: appointmentTime,
             status: 'confirmed',
           },
         ])

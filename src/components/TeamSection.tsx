@@ -8,6 +8,7 @@ interface TeamSectionProps {
 
 const TEAM_MEMBERS = [
   {
+    id: 'dr-emma-harrison',
     name: "Dr. Emma Harrison, MD",
     role: "Medical Director & Board-Certified Dermatologist",
     image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80",
@@ -17,6 +18,7 @@ const TEAM_MEMBERS = [
     favorite: "Bespoke Liquid Facelift Protocol"
   },
   {
+    id: 'sarah-jenkins',
     name: "Sarah Jenkins, LE, CLT",
     role: "Lead Clinical Aesthetician & Laser Specialist",
     image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
@@ -26,6 +28,7 @@ const TEAM_MEMBERS = [
     favorite: "Triple Acid Glow & Infusion Peel"
   },
   {
+    id: 'michael-chang',
     name: "Michael Chang, RN, BSN",
     role: "Aesthetic Injector & Micro-Cannula Specialist",
     image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80",
@@ -35,6 +38,7 @@ const TEAM_MEMBERS = [
     favorite: "Under-Eye Brightening Restoration"
   },
   {
+    id: 'elena-vancet',
     name: "Elena Vancet, LMT, CCE",
     role: "Master Body Contouring & Lymphatic Specialist",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
@@ -134,7 +138,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
                   Favorite: <strong className="text-[#1A1C1A]">{member.favorite}</strong>
                 </div>
                 <button
-                  onClick={() => onBookWithSpecialist(member.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''))}
+                  onClick={() => onBookWithSpecialist(member.id)}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#2D302E] text-white text-xs font-medium hover:bg-black transition-all shadow-xs"
                 >
                   <Calendar className="w-3.5 h-3.5 text-[#8B9D83]" />
@@ -206,7 +210,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
                   Favorite: <strong className="text-[#1A1C1A]">{member.favorite}</strong>
                 </span>
                 <button
-                  onClick={() => onBookWithSpecialist(member.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''))}
+                  onClick={() => onBookWithSpecialist(member.id)}
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#2D302E] text-white text-xs font-medium hover:bg-black transition-colors shadow-xs"
                 >
                   <Calendar className="w-3 h-3 text-[#8B9D83]" />

@@ -13,6 +13,7 @@ interface Protocol {
   benefits: string[];
   specialistName: string;
   specialistRole: string;
+  specialistId: string;
 }
 
 const PROTOCOLS: Protocol[] = [
@@ -31,7 +32,8 @@ const PROTOCOLS: Protocol[] = [
       'Lymphatic drainage detox to contour cheekbones'
     ],
     specialistName: 'Sarah Jenkins, LE, CLT',
-    specialistRole: 'Master Aesthetician'
+    specialistRole: 'Master Aesthetician',
+    specialistId: 'sarah-jenkins'
   },
   {
     id: 'sun-damage',
@@ -48,7 +50,8 @@ const PROTOCOLS: Protocol[] = [
       'Includes take-home post-peel recovery serum kit'
     ],
     specialistName: 'Sarah Jenkins, LE, CLT',
-    specialistRole: 'Master Aesthetician'
+    specialistRole: 'Master Aesthetician',
+    specialistId: 'sarah-jenkins'
   },
   {
     id: 'skin-laxity',
@@ -65,7 +68,8 @@ const PROTOCOLS: Protocol[] = [
       'Includes topical prescription numbing for maximum comfort'
     ],
     specialistName: 'Dr. Emma Harrison, MD',
-    specialistRole: 'Medical Director'
+    specialistRole: 'Medical Director',
+    specialistId: 'dr-emma-harrison'
   },
   {
     id: 'forehead-lines',
@@ -82,7 +86,8 @@ const PROTOCOLS: Protocol[] = [
       'Complimentary 2-week touch-up assessment'
     ],
     specialistName: 'Dr. Emma Harrison, MD',
-    specialistRole: 'Medical Director'
+    specialistRole: 'Medical Director',
+    specialistId: 'dr-emma-harrison'
   }
 ];
 
@@ -214,7 +219,7 @@ export const SkinMatcher: React.FC<SkinMatcherProps> = ({
 
                   <div className="pt-6 border-t border-[#F0EDE8] flex flex-col sm:flex-row items-center gap-3">
                     <button
-                      onClick={() => onSelectTreatmentForBooking(selectedProtocol.id, selectedProtocol.specialistName)}
+                      onClick={() => onSelectTreatmentForBooking(selectedProtocol.id, selectedProtocol.specialistId)}
                       className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#2D302E] text-white text-sm font-medium hover:bg-black shadow-xs active:scale-98 transition-all"
                     >
                       <span>Book This Protocol with BookFlow</span>

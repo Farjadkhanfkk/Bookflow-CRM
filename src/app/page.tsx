@@ -13,6 +13,7 @@ import { FaqSection } from '@/components/FaqSection';
 import { Footer } from '@/components/Footer';
 import { BookingModal } from '@/components/BookingModal';
 import { ServiceDetailModal } from '@/components/ServiceDetailModal';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Service } from '@/types';
 import { useRouter } from 'next/navigation';
 import { Calendar, Sparkles, LayoutDashboard } from 'lucide-react';
@@ -123,12 +124,32 @@ export default function App() {
       </div>
 
       {/* Interactive Booking Flow Modal */}
-      <BookingModal
-        isOpen={bookingModalOpen}
-        onClose={() => setBookingModalOpen(false)}
-        initialServiceId={selectedServiceId}
-        initialSpecialistId={selectedSpecialistId}
-      />
+      <ErrorBoundary
+        fallback={
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl max-w-md w-full mx-4 p-8 text-center shadow-2xl">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center mb-4">
+                <span className="text-2xl">⚠️</span>
+              </div>
+              <h2 className="text-lg font-semibold text-[#1A1C1A] mb-2">Booking unavailable</h2>
+              <p className="text-sm text-[#6B6E6B] mb-6">Please close this message and try again.</p>
+              <button
+                onClick={() => setBookingModalOpen(false)}
+                className="px-5 py-2.5 rounded-full bg-[#8B9D83] text-white text-xs font-semibold hover:bg-[#7A8C72]"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        }
+      >
+        <BookingModal
+          isOpen={bookingModalOpen}
+          onClose={() => setBookingModalOpen(false)}
+          initialServiceId={selectedServiceId}
+          initialSpecialistId={selectedSpecialistId}
+        />
+      </ErrorBoundary>
 
       {/* Service Detail Drawer / Modal */}
       <ServiceDetailModal
