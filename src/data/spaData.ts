@@ -68,7 +68,7 @@ export const SERVICES: Service[] = [
       "Smoothes rough texture and refines enlarged pores",
       "Includes take-home post-peel recovery serum kit"
     ],
-    image: "https://images.unsplash.com/photo-1512290903671-5a2a22283935?auto=format&fit=crop&w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1512290903671-17adc8174f88?auto=format&fit=crop&w=1000&q=80",
     popular: true,
     featured: true,
     procedureSteps: [
@@ -253,11 +253,11 @@ export const TEAM_MEMBERS: TeamMember[] = [
     credentials: "MD, FAAD, Board-Certified",
     experience: "16+ Years Experience",
     bio: "Dr. Emma Harrison completed her dermatology residency and fellowship at Stanford Medicine and Harvard. Renowned for her conservative, artful approach to facial balancing and regenerative aesthetics, Dr. Emma personally designs every treatment protocol at Lumina.",
-    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80",
-    specialties: ["Facial Harmonization", "Advanced Laser Dermatology", "Regenerative Biostimulators", "Skin Cancer Prevention"],
-    favoriteTreatment: "Customized RF Microneedling paired with Exosomes",
-    quote: "True aesthetic excellence is invisible. You should simply look like the best, most rested version of yourself.",
-    education: "Stanford University School of Medicine (MD) • Harvard Fellowship in Aesthetic Dermatology"
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80",
+    specialties: ["Full Facial Harmonization", "Advanced Neuromodulators", "Biostimulatory Fillers (Sculptra)"],
+    favoriteTreatment: "Bespoke Liquid Facelift Protocol",
+    quote: "True aesthetic medicine is not about altering who you are, but restoring the natural balance and vitality of your skin.",
+    education: "Stanford University School of Medicine (MD) • Board Certified Dermatology"
   },
   {
     id: "sarah-jenkins",
@@ -267,39 +267,39 @@ export const TEAM_MEMBERS: TeamMember[] = [
     credentials: "LE, CLT, Master HydraFacial Specialist",
     experience: "11+ Years Experience",
     bio: "Sarah is our celebrated master aesthetician with over a decade of clinical experience in medical peels, laser resurfacing, and stubborn pigment correction. Her holistic skin consultations have transformed thousands of complex acne and melasma conditions.",
-    avatar: "https://images.unsplash.com/photo-1594824813511-208cb21ec68a?auto=format&fit=crop&w=800&q=80",
-    specialties: ["Platinum HydraFacial® MD", "Medical Chemical Peels", "Melasma & Pigment Erase", "Barrier Repair Therapy"],
-    favoriteTreatment: "Medical Chemical Peel with bespoke peptide layering",
-    quote: "Healthy, glowing skin is a marathon of consistency, tailored science, and gentle, loving care.",
-    education: "International Dermal Institute • Certified Laser Technician (CLT)"
+    avatar: "https://images.unsplash.com/photo-1594824813511-208cb21ec68a?auto=format&fit=crop&w=600&q=80",
+    specialties: ["Platinum HydraFacial®", "Medical-Grade Chemical Peels", "RF Microneedling"],
+    favoriteTreatment: "Triple Acid Glow & Infusion Peel",
+    quote: "Healthy, luminous skin is built on cellular integrity, clinical actives, and meticulous barrier care.",
+    education: "CIDESCO International Diplomat • Certified Laser Technician (CLT)"
   },
   {
     id: "michael-chang",
     name: "Michael Chang, RN, BSN",
-    title: "Aesthetic Nurse Injector",
+    title: "Aesthetic Injector & Micro-Cannula Specialist",
     role: "Injectables Specialist",
     credentials: "RN, BSN, CANS Certified",
     experience: "8+ Years Experience",
     bio: "Michael blends surgical precision with an intuitive eye for facial proportion. Having performed thousands of injectable treatments, he specializes in painless micro-cannula lip contouring, jawline sculpting, and smooth natural wrinkle relaxation.",
-    avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80",
-    specialties: ["Lip & Cheek Restoration", "Botox & Dysport Precision", "Micro-Cannula Safety", "Masseter Slimming"],
-    favoriteTreatment: "Subtle Lip Architecture with Restylane Kysse",
-    quote: "Balance and symmetry guide everything I do. We enhance your natural features without changing who you are.",
-    education: "UCLA School of Nursing (BSN) • Certified Aesthetic Nurse Specialist"
+    avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80",
+    specialties: ["Micro-Cannula Tear Trough", "Lip Architecture", "Preventative Tox"],
+    favoriteTreatment: "Under-Eye Brightening Restoration",
+    quote: "Precision and micro-dosing ensure subtle rejuvenation that moves naturally with your expressions.",
+    education: "Johns Hopkins University (BSN, RN) • Certified Aesthetic Nurse Specialist (CANS)"
   },
   {
-    id: "elena-vance",
-    name: "Elena Vance, LMT, CCE",
-    title: "Holistic Skin & Lymphatic Therapist",
+    id: "elena-vancet",
+    name: "Elena Vancet, LMT, CCE",
+    title: "Master Body Contouring & Lymphatic Specialist",
     role: "Wellness & Lymphatic Expert",
     credentials: "LMT, Vodder Certified Lymphatic Specialist",
     experience: "9+ Years Experience",
     bio: "Elena specializes in post-procedure recovery, facial sculpting massage, and full-body lymphatic drainage. Her treatments dramatically reduce inflammation, flush toxins, and impart a profound sense of inner calm.",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
-    specialties: ["Facial Lymphatic Drainage", "Post-Procedure Recovery", "Gua Sha Facial Sculpting", "Cellular Oxygenation"],
-    favoriteTreatment: "Dermaplaning with Oxygen and Lymphatic Sculpting",
-    quote: "When we calm the nervous system, the skin immediately reflects that inner peace and radiance.",
-    education: "Dr. Vodder Academy International • National Holistic Institute"
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
+    specialties: ["Sculptural Face Massage", "Post-Op Lymphatic Drainage", "Radiofrequency Body Sculpting"],
+    favoriteTreatment: "Sculpt & Contour Buccal Facial",
+    quote: "Detoxification and structural lymphatic drainage are the foundation of sculpted, radiant skin.",
+    education: "Swedish Institute College of Health Sciences • Certified Clinical Electrologist"
   }
 ];
 

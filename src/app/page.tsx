@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
-import { TreatmentMatcher } from '@/components/TreatmentMatcher';
+import { SkinMatcher } from '@/components/SkinMatcher';
 import { FeaturedServices } from '@/components/FeaturedServices';
 import { WhyChooseUs } from '@/components/WhyChooseUs';
 import { TeamSection } from '@/components/TeamSection';
@@ -55,7 +55,7 @@ export default function App() {
         <Hero onOpenBooking={() => handleOpenBooking()} />
 
         {/* 2. Interactive Treatment & Skin Concierge Matcher */}
-        <TreatmentMatcher 
+        <SkinMatcher 
           onSelectTreatmentForBooking={(serviceId: string, specialistId?: string) => handleOpenBooking(serviceId, specialistId)}
           onOpenDetails={handleOpenServiceDetails}
         />

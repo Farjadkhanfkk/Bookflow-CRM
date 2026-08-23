@@ -140,63 +140,60 @@ export const TreatmentMatcher: React.FC<TreatmentMatcherProps> = ({
                   </span>
                 </div>
 
-                {/* Treatment Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 my-6 items-center">
-                 <div className="sm:col-span-4 relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden bg-stone-100 flex-shrink-0 border border-stone-200">
+                 {/* Treatment Details */}
+                 <div className="flex flex-col sm:flex-row gap-6 items-start my-6">
                    <img
                      src={matchedService.image}
                      alt={matchedService.name}
                      referrerPolicy="no-referrer"
                      onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
-                     className="w-full h-full object-cover"
+                     className="w-full sm:w-52 h-52 rounded-2xl object-cover shrink-0 border border-stone-200 shadow-sm bg-stone-100"
                    />
+                   <div className="flex-1 min-w-0 space-y-2">
+                     <div className="flex items-baseline justify-between">
+                       <h3 className="text-xl sm:text-2xl font-serif text-[#1A1C1A]">
+                         {matchedService.name}
+                       </h3>
+                       <span className="text-lg font-semibold text-[#8B9D83]">
+                         {matchedService.price}
+                       </span>
+                     </div>
+
+                     <p className="text-xs sm:text-sm text-[#6B6E6B] leading-relaxed">
+                       {matchedService.description}
+                     </p>
+
+                     {/* Specialist recommendation snippet */}
+                     {matchedSpecialist && (
+                       <div className="pt-2 flex items-center gap-2.5 text-xs text-[#6B6E6B]">
+                         <img
+                           src={matchedSpecialist.avatar}
+                           alt={matchedSpecialist.name}
+                           referrerPolicy="no-referrer"
+                           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
+                           className="w-6 h-6 rounded-full object-cover"
+                         />
+                         <span>
+                           Recommended Specialist: <strong className="text-[#1A1C1A]">{matchedSpecialist.name}</strong> ({matchedSpecialist.role})
+                         </span>
+                       </div>
+                     )}
+                   </div>
                  </div>
-
-                  <div className="sm:col-span-8 space-y-2">
-                    <div className="flex items-baseline justify-between">
-                      <h3 className="text-xl sm:text-2xl font-serif text-[#1A1C1A]">
-                        {matchedService.name}
-                      </h3>
-                      <span className="text-lg font-semibold text-[#8B9D83]">
-                        {matchedService.price}
-                      </span>
-                    </div>
-
-                    <p className="text-xs sm:text-sm text-[#6B6E6B] leading-relaxed">
-                      {matchedService.description}
-                    </p>
-
-                    {/* Specialist recommendation snippet */}
-                    {matchedSpecialist && (
-                      <div className="pt-2 flex items-center gap-2.5 text-xs text-[#6B6E6B]">
-                        <img
-                          src={matchedSpecialist.avatar}
-                          alt={matchedSpecialist.name}
-                          referrerPolicy="no-referrer"
-                          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE; }}
-                          className="w-7 h-7 rounded-full object-cover ring-1 ring-stone-200"
-                        />
-                        <span>
-                          Recommended Specialist: <strong className="text-[#1A1C1A]">{matchedSpecialist.name}</strong> ({matchedSpecialist.role})
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
 
                 {/* Key Benefits Pills */}
                 <div className="space-y-2 pt-2 pb-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-[#8B8D8B]">
                     Key Clinical Benefits
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {matchedService.benefits.slice(0, 4).map((benefit, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-[#2D302E]">
-                        <Check className="w-3.5 h-3.5 text-[#8B9D83] shrink-0 mt-0.5" />
-                        <span>{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-stone-600">
+                     {matchedService.benefits.slice(0, 4).map((benefit, idx) => (
+                       <div key={idx} className="flex items-start gap-2">
+                         <Check className="w-3.5 h-3.5 text-[#8B9D83] shrink-0 mt-0.5" />
+                         <span>{benefit}</span>
+                       </div>
+                     ))}
+                   </div>
                 </div>
               </div>
 
