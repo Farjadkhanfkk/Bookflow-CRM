@@ -16,10 +16,10 @@ import {
   Sparkles
 } from 'lucide-react';
 import { CRMAppointment, AppointmentStatus } from '../../types';
-import { TEAM_MEMBERS } from '../../data/spaData';
 
 interface AppointmentsListTabProps {
   appointments: CRMAppointment[];
+  staffMembers?: { id: string; name: string; role: string }[];
   onSelectAppointment: (appointment: CRMAppointment) => void;
   onNewAppointment: () => void;
   onUpdateStatus: (appointmentId: string, newStatus: AppointmentStatus) => void;
@@ -27,6 +27,7 @@ interface AppointmentsListTabProps {
 
 export const AppointmentsListTab: React.FC<AppointmentsListTabProps> = ({
   appointments,
+  staffMembers = [],
   onSelectAppointment,
   onNewAppointment,
   onUpdateStatus
@@ -122,7 +123,7 @@ export const AppointmentsListTab: React.FC<AppointmentsListTabProps> = ({
             className="text-xs rounded-xl border border-[#F0EDE8] bg-[#FDFCFB] text-[#1A1C1A] px-3 py-2 focus:outline-hidden focus:border-[#8B9D83]"
           >
             <option value="all">All Specialists</option>
-            {TEAM_MEMBERS.map(m => (
+            {staffMembers.map(m => (
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
           </select>

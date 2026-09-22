@@ -11,9 +11,12 @@ import {
   Sparkles,
   Check
 } from 'lucide-react';
-import { TEAM_MEMBERS, SPA_INFO } from '../../data/spaData';
 
-export const SettingsTab: React.FC = () => {
+interface SettingsTabProps {
+  staffMembers?: { id: string; name: string; role: string }[];
+}
+
+export const SettingsTab: React.FC<SettingsTabProps> = ({ staffMembers = [] }) => {
   const [saved, setSaved] = useState(false);
   const [autoSmsEnabled, setAutoSmsEnabled] = useState(true);
   const [autoIntakeEnabled, setAutoIntakeEnabled] = useState(true);
@@ -66,7 +69,7 @@ export const SettingsTab: React.FC = () => {
             <label className="block text-xs font-semibold text-[#1A1C1A] mb-1">Clinic Name</label>
             <input
               type="text"
-              defaultValue={SPA_INFO.name}
+              defaultValue="Lumina Med Spa"
               className="w-full px-3.5 py-2 rounded-xl border border-[#E5E2DD] text-xs text-[#1A1C1A] bg-[#FDFCFB] focus:outline-hidden focus:border-[#8B9D83]"
             />
           </div>
@@ -75,7 +78,7 @@ export const SettingsTab: React.FC = () => {
             <label className="block text-xs font-semibold text-[#1A1C1A] mb-1">Concierge Direct Phone</label>
             <input
               type="text"
-              defaultValue={SPA_INFO.phone}
+              defaultValue="(555) 849-GLOW"
               className="w-full px-3.5 py-2 rounded-xl border border-[#E5E2DD] text-xs text-[#1A1C1A] bg-[#FDFCFB] focus:outline-hidden focus:border-[#8B9D83]"
             />
           </div>
@@ -84,7 +87,7 @@ export const SettingsTab: React.FC = () => {
             <label className="block text-xs font-semibold text-[#1A1C1A] mb-1">Physical Address</label>
             <input
               type="text"
-              defaultValue={SPA_INFO.address}
+              defaultValue="428 Beverly Hills Boulevard, Suite 300, Beverly Hills, CA 90210"
               className="w-full px-3.5 py-2 rounded-xl border border-[#E5E2DD] text-xs text-[#1A1C1A] bg-[#FDFCFB] focus:outline-hidden focus:border-[#8B9D83]"
             />
           </div>
@@ -139,28 +142,30 @@ export const SettingsTab: React.FC = () => {
         </div>
 
         <div className="divide-y divide-[#F0EDE8] text-xs">
-          {TEAM_MEMBERS.map((member) => (
-            <div key={member.id} className="py-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <img
-                  src={member.avatar}
-                  alt={member.name}
-                  className="w-9 h-9 rounded-full object-cover border border-[#F0EDE8]"
-                />
-                <div>
-                  <h4 className="font-semibold text-[#1A1C1A]">{member.name}</h4>
-                  <p className="text-[11px] text-[#8B9D83]">{member.role}</p>
+          {staffMembers.length > 0 ? (
+            staffMembers.map((member) => (
+              <div key={member.id} className="py-3 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#F5F7F4] border border-[#F0EDE8] flex items-center justify-center text-[10px] font-bold text-[#8B9D83]">
+                    {member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-[#1A1C1A]">{member.name}</h4>
+                    <p className="text-[11px] text-[#8B9D83]">{member.role}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Accepting Online Bookings
+                  </span>
+                  <span className="text-[11px] text-[#6B6E6B]">Room 1–4</span>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  Accepting Online Bookings
-                </span>
-                <span className="text-[11px] text-[#6B6E6B]">Room 1–4</span>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="py-4 text-center text-xs text-[#8B8D8B]">No staff members available.</div>
+          )}
         </div>
       </div>
     </div>

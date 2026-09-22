@@ -19,7 +19,7 @@ import { SettingsTab } from './SettingsTab';
 import { AppointmentDetailDrawer } from './AppointmentDetailDrawer';
 import { NewAppointmentModal } from './NewAppointmentModal';
 import { CustomersTab } from './CustomersTab';
-import { CRMAppointment, AppointmentStatus, QuickStatMetric, CustomerDirectoryEntry } from '../../types';
+import { CRMAppointment, AppointmentStatus, QuickStatMetric, CustomerDirectoryEntry, TeamMember } from '../../types';
 import { toTimeLabel, computeEndTimeLabel } from '@/lib/appointment-data';
 
 interface StaffDashboardProps {
@@ -37,6 +37,8 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const [appointments, setAppointments] = useState<CRMAppointment[]>([]);
+
+  const [staffMembers, setStaffMembers] = useState<TeamMember[]>([]);
 
   const [stats, setStats] = useState<QuickStatMetric[]>([]);
   const loadDashboardData = useCallback(async () => {
@@ -58,6 +60,21 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
       if (custRes.error) throw custRes.error;
       if (servRes.error) throw servRes.error;
       if (staffRes.error) throw staffRes.error;
+
+      setStaffMembers((staffRes.data || []).map((st: any) => ({
+        id: st.id,
+        name: st.name || st.full_name || 'Staff Member',
+        title: st.title || '',
+        role: st.role || st.title || '',
+        credentials: '',
+        experience: '',
+        bio: '',
+        avatar: '',
+        specialties: [],
+        favoriteTreatment: '',
+        quote: '',
+        education: '',
+      })));
 
       const customerMap = new Map((custRes.data || []).map((c: any) => [c.id, c]));
       const serviceMap = new Map((servRes.data || []).map((s: any) => [s.id, s]));
@@ -377,6 +394,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
           {activeTab === 'appointments' && (
             <AppointmentsListTab
               appointments={appointments}
+              staffMembers={staffMembers}
               onSelectAppointment={(apt) => setSelectedAppointment(apt)}
               onNewAppointment={() => handleOpenNewAppointment()}
               onUpdateStatus={handleUpdateStatus}
@@ -391,7 +409,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
           )}
 
           {activeTab === 'settings' && (
-            <SettingsTab />
+            <SettingsTab staffMembers={staffMembers} />
           )}
             </>
           )}

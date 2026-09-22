@@ -3,8 +3,7 @@ import {
   X, Calendar, Clock, User, Sparkles, Check, CheckCircle2, 
   ArrowRight, ArrowLeft, Phone, Mail, ShieldCheck, Heart, Info, MapPin 
 } from 'lucide-react';
-import { SERVICES, TEAM_MEMBERS, SPA_INFO } from '../data/spaData';
-import { Service, TeamMember, BookingState } from '../types';
+import { Service, TeamMember } from '../types';
 
 import { supabase } from '@/lib/supabase';
 
@@ -147,14 +146,21 @@ const FALLBACK_TEAM: TeamMember[] = [
 
 const FALLBACK_TIME_SLOTS = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM'];
 
+const SPA_PHONE = '(555) 849-GLOW';
+const SPA_FORMATTED_PHONE = '+1 (555) 849-4569';
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
   initialServiceId,
   initialSpecialistId,
 }) => {
-  const safeServices = SERVICES && SERVICES.length > 0 ? SERVICES : FALLBACK_SERVICES;
-  const safeTeam = TEAM_MEMBERS && TEAM_MEMBERS.length > 0 ? TEAM_MEMBERS : FALLBACK_TEAM;
+  const [services, setServices] = useState<Service[]>([]);
+  const [staff, setStaff] = useState<TeamMember[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  const safeServices = services.length > 0 ? services : FALLBACK_SERVICES;
+  const safeStaff = staff.length > 0 ? staff : FALLBACK_TEAM;
 
   const [step, setStep] = useState<number>(1);
   const [selectedServiceId, setSelectedServiceId] = useState<string>(initialServiceId || safeServices[0]?.id || '');
@@ -173,26 +179,92 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const [confirmationCode, setConfirmationCode] = useState<string>('');
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchBookingData() {
+      try {
+        setDataLoading(true);
+        const [servicesRes, staffRes] = await Promise.all([
+          supabase.from('services').select('*').order('name'),
+          supabase.from('staff_members').select('*').order('name'),
+        ]);
+        if (servicesRes.error) throw servicesRes.error;
+        if (staffRes.error) throw staffRes.error;
+        const mappedServices = (servicesRes.data || []).map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          category: row.category || 'facials',
+          tagline: row.tagline || '',
+          description: row.description || '',
+          price: row.price || '$0',
+          startingPriceNumber: row.starting_price_number ?? row.startingPriceNumber ?? 0,
+          duration: row.duration || '',
+          downtime: row.downtime || '',
+          idealFor: Array.isArray(row.ideal_for) ? row.ideal_for : (Array.isArray(row.idealFor) ? row.idealFor : []),
+          benefits: Array.isArray(row.benefits) ? row.benefits : (Array.isArray(row.benefits) ? row.benefits : []),
+          image: row.image || '',
+          popular: row.popular ?? false,
+          featured: row.featured ?? false,
+          procedureSteps: Array.isArray(row.procedure_steps) ? row.procedure_steps : (Array.isArray(row.procedureSteps) ? row.procedureSteps : []),
+        }));
+        const mappedStaff = (staffRes.data || []).map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          title: row.title || '',
+          role: row.role || '',
+          credentials: row.credentials || '',
+          experience: row.experience || '',
+          bio: row.bio || '',
+          avatar: row.avatar || row.image_url || '',
+          specialties: Array.isArray(row.specialties) ? row.specialties : [],
+          favoriteTreatment: row.favorite_treatment || row.favoriteTreatment || '',
+          quote: row.quote || '',
+          education: row.education || '',
+        }));
+        setServices(mappedServices.length > 0 ? mappedServices : FALLBACK_SERVICES);
+        setStaff(mappedStaff.length > 0 ? mappedStaff : FALLBACK_TEAM);
+      } catch (e: any) {
+        console.error('Error fetching booking data:', e);
+        setServices(FALLBACK_SERVICES);
+        setStaff(FALLBACK_TEAM);
+      } finally {
+        setDataLoading(false);
+      }
+    }
+    fetchBookingData();
+  }, []);
 
   // Reset or update selections when props change
   useEffect(() => {
     if (initialServiceId && safeServices.some((s) => s.id === initialServiceId)) {
       setSelectedServiceId(initialServiceId);
     }
-    if (initialSpecialistId && (initialSpecialistId === 'any' || safeTeam.some((t) => t.id === initialSpecialistId))) {
+    if (initialSpecialistId && (initialSpecialistId === 'any' || safeStaff.some((t) => t.id === initialSpecialistId))) {
       setSelectedSpecialistId(initialSpecialistId);
     }
-  }, [initialServiceId, initialSpecialistId, safeServices, safeTeam]);
+  }, [initialServiceId, initialSpecialistId, safeServices, safeStaff]);
 
-  // Generate mock available dates for the next 7 days
-  const dateOptions = [
-    { label: 'Tomorrow', dateStr: 'Wed, Aug 19', day: '19', month: 'AUG' },
-    { label: 'Thursday', dateStr: 'Thu, Aug 20', day: '20', month: 'AUG' },
-    { label: 'Friday', dateStr: 'Fri, Aug 21', day: '21', month: 'AUG' },
-    { label: 'Saturday', dateStr: 'Sat, Aug 22', day: '22', month: 'AUG' },
-    { label: 'Monday', dateStr: 'Mon, Aug 24', day: '24', month: 'AUG' },
-    { label: 'Tuesday', dateStr: 'Tue, Aug 25', day: '25', month: 'AUG' },
-  ];
+  // Generate rolling dates starting from today for the next 14 days
+  const dateOptions = (() => {
+    const labels = ['Tomorrow', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday'];
+    const options = [];
+    const now = new Date();
+    for (let i = 1; i <= 14; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() + i);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+      const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
+      options.push({
+        label: i === 1 ? 'Tomorrow' : weekday,
+        dateStr: `${weekday.slice(0, 3)}, ${month} ${day}`,
+        day,
+        month,
+      });
+    }
+    return options;
+  })();
 
   const timeSlots = [
     '09:30 AM', '10:45 AM', '12:00 PM', '01:30 PM', '03:00 PM', '04:15 PM', '05:30 PM'
@@ -210,7 +282,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   if (!isOpen) return null;
 
   const currentService = safeServices.find((s) => s.id === selectedServiceId) || safeServices[0];
-  const currentSpecialist = safeTeam.find((t) => t.id === selectedSpecialistId);
+  const currentSpecialist = safeStaff.find((t) => t.id === selectedSpecialistId);
 
   const validateStep4 = () => {
     const errors: { [key: string]: string } = {};
@@ -254,6 +326,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const handleConfirmBooking = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     if (!validateStep4()) return;
 
     setLoading(true);
@@ -291,6 +364,26 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       const staffId = selectedSpecialistId === 'any' ? null : selectedSpecialistId;
       const appointmentTime = toISODateTime(selectedDate, selectedTimeSlot);
 
+      // Double-booking check: query existing appointments for this staff on this date
+      const { data: dayApts, error: conflictError } = await supabase
+        .from('appointments')
+        .select('id, appointment_time')
+        .eq('staff_id', staffId)
+        .order('appointment_time', { ascending: true });
+
+      if (!conflictError && dayApts) {
+        const hasConflict = dayApts.some((a) => {
+          const aTime = new Date(a.appointment_time).getTime();
+          const newTime = new Date(appointmentTime).getTime();
+          return Math.abs(aTime - newTime) < 3600000;
+        });
+        if (hasConflict) {
+          setSubmitError('This time slot conflicts with an existing appointment. Please choose a different date or time.');
+          setLoading(false);
+          return;
+        }
+      }
+
       const { data: appointment, error: appointmentError } = await supabase
         .from('appointments')
         .insert([
@@ -299,7 +392,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             service_id: selectedServiceId,
             staff_id: staffId,
             appointment_time: appointmentTime,
-            status: 'confirmed',
+            appointment_date: selectedDate,
+            time_slot: selectedTimeSlot,
+            status: 'Confirmed',
           },
         ])
         .select('id')
@@ -311,7 +406,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setStep(5);
     } catch (error) {
       console.error('Error booking appointment:', error);
-      alert('Failed to book appointment. Please try again.');
+      setSubmitError('Failed to book appointment. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -421,7 +516,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 gap-3 max-h-[50vh] overflow-y-auto pr-1">
-                {SERVICES.map((s) => {
+                {safeServices.map((s) => {
                   const isSelected = s.id === selectedServiceId;
                   return (
                     <button
@@ -517,7 +612,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </button>
 
                 {/* Team Members */}
-                {TEAM_MEMBERS.map((member) => {
+                {safeStaff.map((member) => {
                   const isSelected = selectedSpecialistId === member.id;
                   return (
                     <button
@@ -674,6 +769,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           {/* STEP 4: Personal Details & Skin Goals */}
           {step === 4 && (
             <form onSubmit={handleConfirmBooking} className="space-y-4 animate-in fade-in">
+              {submitError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700">
+                  {submitError}
+                </div>
+              )}
               <div className="space-y-1">
                 <h3 className="text-xl font-light serif text-[#1A1C1A]">
                   Patient Contact & Pre-Care Notes
@@ -845,13 +945,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   Done & Return to Website
                 </button>
 
-                <a
-                  href={`tel:${SPA_INFO.formattedPhone}`}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full border border-[#F0EDE8] bg-white text-xs font-medium text-[#1A1C1A] hover:bg-[#F5F7F4]"
-                >
-                  <Phone className="w-3.5 h-3.5 text-[#8B9D83]" />
-                  <span>Call Concierge: {SPA_INFO.phone}</span>
-                </a>
+                  <a
+                    href={`tel:${SPA_PHONE}`}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full border border-[#F0EDE8] bg-white text-xs font-medium text-[#1A1C1A] hover:bg-[#F5F7F4]"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-[#8B9D83]" />
+                    <span>Call Concierge: {SPA_PHONE}</span>
+                  </a>
               </div>
 
             </div>
