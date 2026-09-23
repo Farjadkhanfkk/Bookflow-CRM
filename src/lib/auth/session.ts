@@ -1,6 +1,6 @@
-import { cache } from 'react';
-import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { redirect } from 'next/navigation';
+import { cache } from 'react';
 
 /**
  * Returns the authenticated Supabase user, or null when unauthenticated.
@@ -21,5 +21,8 @@ export const getCurrentUser = cache(async () => {
 export async function requireUser() {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
+  const db = await createServerSupabaseClient();
+  const { data: member } = await db.from('business_members').select('role').eq('user_id', user.id).eq('is_active', true).maybeSingle();
+  if (!member) redirect('/login?error=access');
   return user;
 }

@@ -1,5 +1,6 @@
+import { Coffee,Heart,Moon,Sparkles,Wind } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
-import { Coffee, Wind, Sparkles, Moon, ShieldCheck, Heart } from 'lucide-react';
 
 export const SanctuarySection: React.FC = () => {
   const amenities = [
@@ -35,7 +36,7 @@ export const SanctuarySection: React.FC = () => {
           <div className="lg:col-span-6 grid grid-cols-2 gap-4">
             <div className="space-y-4">
               <div className="rounded-2xl overflow-hidden shadow-sm aspect-3/4 border border-[#F0EDE8]">
-                <img
+                <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
                   alt="Lumina luxury treatment suite"
                   referrerPolicy="no-referrer"
@@ -56,7 +57,7 @@ export const SanctuarySection: React.FC = () => {
                 <p className="text-[#A5A29D] mt-1">Zero rushed appointments. Dedicated 15-minute relaxation buffer between each patient.</p>
               </div>
               <div className="rounded-2xl overflow-hidden shadow-sm aspect-3/4 border border-[#F0EDE8]">
-                <img
+                <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=800&q=80"
                   alt="Lumina relaxation tea lounge"
                   referrerPolicy="no-referrer"

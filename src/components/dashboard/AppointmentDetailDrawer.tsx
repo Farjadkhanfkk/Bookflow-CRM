@@ -1,27 +1,22 @@
-import React, { useState } from 'react';
-import { 
-  X, 
-  Clock, 
-  Calendar, 
-  MapPin, 
-  User, 
-  Phone, 
-  Mail, 
-  CreditCard, 
-  ShieldAlert, 
-  FileText, 
-  CheckCircle2, 
-  Sparkles,
-  Send,
-  Printer
+import { useDialogFocus } from '@/components/useDialogFocus';
+import { statusTransitions } from '@/lib/validation';
+import {
+CreditCard,
+FileText,
+Mail,
+Phone,
+ShieldAlert,
+X
 } from 'lucide-react';
-import { CRMAppointment, AppointmentStatus } from '../../types';
+import Image from 'next/image';
+import React,{ useState } from 'react';
+import { AppointmentStatus,CRMAppointment } from '../../types';
 
 interface AppointmentDetailDrawerProps {
   appointment: CRMAppointment | null;
   onClose: () => void;
   onUpdateStatus: (appointmentId: string, status: AppointmentStatus) => void;
-  onUpdateNotes: (appointmentId: string, notes: string) => void;
+  onUpdateNotes: (appointmentId: string, notes: string) => Promise<void>;
 }
 
 export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = ({
@@ -30,17 +25,20 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
   onUpdateStatus,
   onUpdateNotes
 }) => {
-  if (!appointment) return null;
 
-  const [notes, setNotes] = useState<string>(appointment.notes || '');
+  const [notes, setNotes] = useState<string>(appointment?.notes || '');
   const [savedNotes, setSavedNotes] = useState(false);
 
-  const handleSaveNotes = () => {
-    onUpdateNotes(appointment.id, notes);
-    setSavedNotes(true);
-    setTimeout(() => setSavedNotes(false), 2000);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const dialogRef = useDialogFocus(!!appointment, onClose);
+  if (!appointment) return null;
+  const handleSaveNotes = async () => {
+    setSaving(true); setError(''); setSavedNotes(false);
+    try { await onUpdateNotes(appointment.id, notes); setSavedNotes(true); }
+    catch { setError('Notes could not be saved. Please retry.'); }
+    finally { setSaving(false); }
   };
-
   const getStatusBadge = (status: AppointmentStatus) => {
     switch (status) {
       case 'in_progress':
@@ -59,7 +57,7 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Details" className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
       <div className="w-full max-w-lg bg-[#FDFCFB] h-full shadow-2xl border-l border-[#F0EDE8] flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
         
         {/* Drawer Header */}
@@ -79,6 +77,7 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
           </button>
         </div>
 
+        {error && <p role="alert" className="p-4 text-red-800">{error}</p>}
         {/* Drawer Body Content */}
         <div className="p-6 space-y-6 flex-1 text-xs">
           
@@ -86,7 +85,7 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
           <div className="p-4 rounded-2xl bg-white border border-[#F0EDE8] shadow-xs space-y-3">
             <div className="flex items-center gap-3.5">
               {appointment.patientAvatar ? (
-                <img 
+                <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" 
                   src={appointment.patientAvatar} 
                   alt={appointment.patientName}
                   className="w-12 h-12 rounded-2xl object-cover border border-[#8B9D83]/40"
@@ -239,7 +238,7 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
 
             <div className="flex justify-end">
               <button
-                onClick={handleSaveNotes}
+                disabled={saving} onClick={handleSaveNotes}
                 className="px-3.5 py-1.5 rounded-lg bg-[#2D302E] text-white hover:bg-black text-[11px] font-medium transition-colors"
               >
                 Save Clinical Notes
@@ -266,12 +265,12 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
               </div>
               <div className="flex justify-between">
                 <span className="text-[#8B8D8B]">Online Deposit Applied:</span>
-                <span className="font-mono text-emerald-700">-$50.00</span>
+                <span className="font-mono text-emerald-700">-${(appointment.depositAmount ?? 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between pt-1 border-t border-[#F5F7F4] text-sm font-bold">
                 <span className="text-[#1A1C1A]">Balance Due:</span>
                 <span className="font-mono text-[#1A1C1A]">
-                  ${appointment.paymentStatus === 'paid' ? '0.00' : `${appointment.price - 50}.00`}
+                  ${Math.max(0, appointment.price - (appointment.paymentStatus === 'paid' ? appointment.depositAmount ?? 0 : 0)).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -279,15 +278,10 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
 
         </div>
 
+        <div className="px-6 py-3 flex flex-wrap gap-3">{(statusTransitions[appointment.status] ?? []).map(status => <button className="underline text-sm" key={status} onClick={() => onUpdateStatus(appointment.id, status as AppointmentStatus)}>{status.replaceAll('_',' ')}</button>)}</div>
         {/* Drawer Bottom Actions */}
         <div className="sticky bottom-0 bg-[#FDFCFB] px-6 py-4 border-t border-[#F0EDE8] flex items-center justify-between gap-3">
-          <button
-            onClick={() => alert(`Pre-treatment preparation SMS resent to ${appointment.patientPhone}`)}
-            className="px-3.5 py-2 rounded-xl border border-[#F0EDE8] bg-white text-xs font-medium text-[#2D302E] hover:bg-[#F5F7F4] flex items-center gap-1.5"
-          >
-            <Send className="w-3.5 h-3.5 text-[#8B9D83]" />
-            <span>Resend SMS</span>
-          </button>
+          <p className="text-xs text-stone-600">Notifications are queued automatically with customer consent.</p>
 
           <div className="flex items-center gap-2">
             <button

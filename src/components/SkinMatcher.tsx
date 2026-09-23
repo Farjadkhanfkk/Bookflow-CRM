@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Sparkles, ArrowRight, Check } from 'lucide-react';
+import { ArrowRight,Check,Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import React,{ useState } from 'react';
 import { Service } from '../types';
 
 interface Protocol {
@@ -159,7 +160,7 @@ export const SkinMatcher: React.FC<SkinMatcherProps> = ({
           <div className="lg:col-span-7">
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/80 shadow-sm w-full">
               <div className="flex flex-col md:flex-row gap-6 items-start w-full">
-                <img
+                <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src={selectedProtocol.image}
                   alt={selectedProtocol.title}
                   className="w-full md:w-56 h-52 md:h-56 rounded-2xl overflow-hidden shrink-0 bg-stone-100 border border-stone-200 object-cover"

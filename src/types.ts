@@ -65,7 +65,7 @@ export interface BookingState {
   isFirstVisit: boolean;
 }
 
-export type AppointmentStatus = 'confirmed' | 'in_progress' | 'checked_in' | 'completed' | 'pending_payment' | 'cancelled';
+export type AppointmentStatus = 'confirmed' | 'in_progress' | 'checked_in' | 'completed' | 'pending_payment' | 'cancelled' | 'no_show';
 
 export interface CRMAppointment {
   id: string;
@@ -86,7 +86,7 @@ export interface CRMAppointment {
   room: string; // "Suite 1 - Clinical Laser", "Suite 2 - Aesthetic", etc.
   status: AppointmentStatus;
   price: number;
-  paymentStatus: 'paid' | 'pending' | 'deposit_only' | 'refunded';
+  paymentStatus: 'paid' | 'pending' | 'deposit_only' | 'refunded' | 'not_required' | 'partially_refunded';
   depositAmount?: number;
   notes?: string;
   medicalAlerts?: string[];
@@ -148,7 +148,7 @@ export interface CustomerAppointmentHistory {
   date: string; // local e.g. "2026-08-16"
   time: string; // e.g. "10:30 AM"
   status: AppointmentStatus;
-  paymentStatus: 'paid' | 'pending' | 'deposit_only' | 'refunded';
+  paymentStatus: 'paid' | 'pending' | 'deposit_only' | 'refunded' | 'not_required' | 'partially_refunded';
   notes?: string;
 }
 

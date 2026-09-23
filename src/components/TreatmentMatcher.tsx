@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Sparkles, ArrowRight, Check, Shield, Clock, Flame, Zap } from 'lucide-react';
-import { SERVICES, TEAM_MEMBERS } from '../data/spaData';
+import { ArrowRight,Check,Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import React,{ useState } from 'react';
+import { SERVICES,TEAM_MEMBERS } from '../data/spaData';
 import { Service } from '../types';
 
 interface TreatmentMatcherProps {
@@ -142,7 +143,7 @@ export const TreatmentMatcher: React.FC<TreatmentMatcherProps> = ({
 
                  {/* Treatment Details */}
                  <div className="flex flex-col sm:flex-row gap-6 items-start my-6">
-                   <img
+                   <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                      src={matchedService.image}
                      alt={matchedService.name}
                      referrerPolicy="no-referrer"
@@ -166,7 +167,7 @@ export const TreatmentMatcher: React.FC<TreatmentMatcherProps> = ({
                      {/* Specialist recommendation snippet */}
                      {matchedSpecialist && (
                        <div className="pt-2 flex items-center gap-2.5 text-xs text-[#6B6E6B]">
-                         <img
+                         <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                            src={matchedSpecialist.avatar}
                            alt={matchedSpecialist.name}
                            referrerPolicy="no-referrer"

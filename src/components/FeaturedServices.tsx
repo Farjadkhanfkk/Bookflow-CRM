@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Clock, ShieldCheck, ArrowRight, Eye, Check, Info } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { Service, ServiceCategory } from '../types';
+import { SERVICES } from '@/data/spaData';
+import { ArrowRight,Clock,Eye,ShieldCheck,Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import React,{ useState } from 'react';
+import { Service,ServiceCategory } from '../types';
 
 interface FeaturedServicesProps {
   onSelectServiceForBooking: (serviceId: string) => void;
@@ -14,35 +15,7 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({
 }) => {
   const DEFAULT_SERVICE_IMAGE = 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800';
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>('all');
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-   useEffect(() => {
-    async function fetchServices() {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase.from('services').select('*');
-        if (error) {
-          console.error('Error fetching services:', {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-          });
-          setError(error.message);
-          return;
-        }
-        setServices(data ?? []);
-      } catch (e: any) {
-        console.error('Error fetching services:', e);
-        setError('Failed to load services.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchServices();
-  }, []);
+  const services = SERVICES;
 
   const categories: { id: ServiceCategory; label: string }[] = [
     { id: 'all', label: 'All Treatments' },
@@ -56,8 +29,6 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({
     ? services 
     : services.filter((s) => s.category === activeCategory);
 
-  if (loading) return <div className="py-20 text-center">Loading services...</div>;
-  if (error) return <div className="py-20 text-center text-red-500">{error}</div>;
 
   return (
     <section id="services" className="py-20 bg-[#FDFCFB]">
@@ -122,8 +93,8 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({
             >
               {/* Image Container with Badges */}
               <div className="relative aspect-16/10 overflow-hidden bg-stone-100">
-                <img
-                  src={service.image || (service as any).image_url || DEFAULT_SERVICE_IMAGE}
+                <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  src={service.image || DEFAULT_SERVICE_IMAGE}
                   alt={service.name}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -168,7 +139,7 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({
 
                   {/* Ideal For Tags */}
                   <div className="pt-2 flex flex-wrap gap-1.5">
-                     {(service.idealFor ?? (service as any).ideal_for ?? []).slice(0, 3).map((item: string, idx: number) => (
+                     {(service.idealFor ?? []).slice(0, 3).map((item: string, idx: number) => (
                       <span
                         key={idx}
                         className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F5F7F4] text-[#6B6E6B] font-medium border border-[#F0EDE8]"

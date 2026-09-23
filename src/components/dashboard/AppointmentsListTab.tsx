@@ -1,21 +1,11 @@
-import React, { useState } from 'react';
-import { 
-  Search, 
-  Filter, 
-  Calendar, 
-  Clock, 
-  User, 
-  CheckCircle2, 
-  MoreHorizontal, 
-  Plus, 
-  ArrowUpDown, 
-  Phone, 
-  Mail,
-  FileCheck,
-  CreditCard,
-  Sparkles
+import {
+MoreHorizontal,
+Plus,
+Search
 } from 'lucide-react';
-import { CRMAppointment, AppointmentStatus } from '../../types';
+import Image from 'next/image';
+import React,{ useState } from 'react';
+import { AppointmentStatus,CRMAppointment } from '../../types';
 
 interface AppointmentsListTabProps {
   appointments: CRMAppointment[];
@@ -93,7 +83,7 @@ export const AppointmentsListTab: React.FC<AppointmentsListTabProps> = ({
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8B8D8B]" />
           <input
             type="text"
-            placeholder="Search patient, phone, service, room..."
+            aria-label="Search appointments" placeholder="Search patient, phone, service, room..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-[#F0EDE8] bg-[#FDFCFB] text-[#1A1C1A] placeholder:text-[#8B8D8B] focus:outline-hidden focus:border-[#8B9D83]"
@@ -104,7 +94,7 @@ export const AppointmentsListTab: React.FC<AppointmentsListTabProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           {/* Status Filter */}
           <select
-            value={statusFilter}
+            aria-label="Filter by status" value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="text-xs rounded-xl border border-[#F0EDE8] bg-[#FDFCFB] text-[#1A1C1A] px-3 py-2 focus:outline-hidden focus:border-[#8B9D83]"
           >
@@ -113,12 +103,12 @@ export const AppointmentsListTab: React.FC<AppointmentsListTabProps> = ({
             <option value="checked_in">Checked In</option>
             <option value="confirmed">Confirmed</option>
             <option value="completed">Completed</option>
-            <option value="pending_payment">Pending Payment</option>
+            <option value="pending_payment">Pending Payment</option><option value="cancelled">Cancelled</option><option value="no_show">No-show</option>
           </select>
 
           {/* Specialist Filter */}
           <select
-            value={specialistFilter}
+            aria-label="Filter by provider" value={specialistFilter}
             onChange={(e) => setSpecialistFilter(e.target.value)}
             className="text-xs rounded-xl border border-[#F0EDE8] bg-[#FDFCFB] text-[#1A1C1A] px-3 py-2 focus:outline-hidden focus:border-[#8B9D83]"
           >
@@ -167,7 +157,7 @@ export const AppointmentsListTab: React.FC<AppointmentsListTabProps> = ({
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
                         {apt.patientAvatar ? (
-                          <img 
+                          <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" 
                             src={apt.patientAvatar} 
                             alt={apt.patientName}
                             className="w-9 h-9 rounded-full object-cover border border-[#F0EDE8]"

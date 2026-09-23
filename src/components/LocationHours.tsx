@@ -1,5 +1,6 @@
+import { ArrowRight,Calendar,Car,Clock,Mail,MapPin,Phone } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
-import { MapPin, Clock, Phone, Mail, Car, ShieldCheck, Calendar, ArrowRight } from 'lucide-react';
 import { SPA_INFO } from '../data/spaData';
 
 interface LocationHoursProps {
@@ -103,7 +104,7 @@ export const LocationHours: React.FC<LocationHoursProps> = ({ onOpenBooking }) =
 
           {/* Right Column: Visual Aesthetic Map Representation */}
           <div className="lg:col-span-6 rounded-2xl overflow-hidden border border-[#F0EDE8] relative min-h-[360px] bg-stone-200 shadow-sm flex flex-col justify-end">
-            <img
+            <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1200&q=80"
               alt="Beverly Hills Location Map Map view"
               referrerPolicy="no-referrer"

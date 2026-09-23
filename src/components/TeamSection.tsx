@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Award, GraduationCap, Calendar, CheckCircle2, MessageSquareQuote } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
-import { TeamMember } from '../types';
+import { Award,Calendar,CheckCircle2,GraduationCap,MessageSquareQuote,ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 
 interface TeamSectionProps {
   onBookWithSpecialist: (specialistId: string) => void;
@@ -83,45 +82,9 @@ const FALLBACK_TEAM: StaffRow[] = [
 ];
 
 export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }) => {
-  const [teamMembers, setTeamMembers] = useState<StaffRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const teamMembers = FALLBACK_TEAM;
 
-  useEffect(() => {
-    async function fetchTeam() {
-      try {
-        setLoading(true);
-        setError(null);
-        const { data, error } = await supabase
-          .from('staff_members')
-          .select('*')
-          .order('name');
 
-        if (error) {
-          console.error('Error fetching staff_members:', error);
-          setError(error.message);
-          setTeamMembers(FALLBACK_TEAM);
-          return;
-        }
-
-        const rows = (data || []) as StaffRow[];
-        setTeamMembers(rows.length > 0 ? rows : FALLBACK_TEAM);
-      } catch (e: any) {
-        console.error('Error fetching staff_members:', e);
-        setError(e?.message || 'Failed to load team members.');
-        setTeamMembers(FALLBACK_TEAM);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTeam();
-  }, []);
-
-  const getInitials = (name: string) => name.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
-
-  if (loading) return <div className="py-20 text-center">Loading team...</div>;
-  if (error && teamMembers.length === 0) return <div className="py-20 text-center text-red-500">{error}</div>;
 
   return (
     <section id="team" className="py-20 bg-[#FDFCFB] border-t border-[#F0EDE8]">
@@ -129,10 +92,10 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F5F7F4] text-[#8B9D83] text-xs font-semibold uppercase tracking-[0.2em] border border-[#F0EDE8]">
             <Award className="w-3.5 h-3.5" />
-            World-Class Clinical Practitioners
+            Fictional Provider Profiles
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light serif text-[#1A1C1A]">
-            Meet Our Medical & Aesthetic Team
+            Meet the Concept Team
           </h2>
           <p className="text-base text-[#6B6E6B] leading-relaxed">
             Led by board-certified dermatologist Dr. Emma Harrison and master aesthetician Sarah Jenkins, our practitioners blend decades of academic medicine with an artistic eye for natural beauty.
@@ -149,7 +112,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
               <div>
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-[#F0EDE8]">
                   <div className="relative shrink-0">
-                     <img
+                     <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                        src={member.image_url || member.image || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80'}
                        alt={member.name}
                        referrerPolicy="no-referrer"
@@ -248,7 +211,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onBookWithSpecialist }
             >
               <div>
                 <div className="flex items-center gap-4 pb-4 border-b border-[#F0EDE8]">
-                  <img
+                  <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     src={member.image_url || member.image || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80'}
                     alt={member.name}
                     referrerPolicy="no-referrer"

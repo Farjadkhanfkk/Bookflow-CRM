@@ -1,5 +1,5 @@
+import { Award,CheckCircle2,HeartHandshake,Smartphone,Sparkles,Stethoscope } from 'lucide-react';
 import React from 'react';
-import { Shield, Sparkles, HeartHandshake, Smartphone, Award, Stethoscope, Star, CheckCircle2 } from 'lucide-react';
 import { SPA_INFO } from '../data/spaData';
 
 export const WhyChooseUs: React.FC = () => {
@@ -14,7 +14,7 @@ export const WhyChooseUs: React.FC = () => {
       icon: Sparkles,
       title: "Gold-Standard Technologies",
       description: "We invest exclusively in authentic, FDA-cleared devices—including original HydraFacial® MD, Morpheus8 RF, and Clear + Brilliant® fractional lasers.",
-      tag: "Authentic & Verified"
+      tag: "Concept Experience"
     },
     {
       icon: HeartHandshake,
@@ -102,7 +102,7 @@ export const WhyChooseUs: React.FC = () => {
                 {SPA_INFO.stats.satisfactionRate}
               </p>
               <p className="text-xs uppercase tracking-wider text-[#A5A29D] font-medium">
-                Verified Client Satisfaction
+                Illustrative Satisfaction
               </p>
             </div>
 

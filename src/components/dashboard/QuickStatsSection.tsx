@@ -1,14 +1,14 @@
-import React from 'react';
-import { 
-  Calendar, 
-  DollarSign, 
-  UserCheck, 
-  CreditCard, 
-  Activity, 
-  TrendingUp, 
-  TrendingDown,
-  ArrowUpRight
+import {
+Activity,
+ArrowUpRight,
+Calendar,
+CreditCard,
+DollarSign,
+TrendingDown,
+TrendingUp,
+UserCheck
 } from 'lucide-react';
+import React from 'react';
 import { QuickStatMetric } from '../../types';
 
 interface QuickStatsSectionProps {

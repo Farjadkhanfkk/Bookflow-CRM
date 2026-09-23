@@ -1,9 +1,11 @@
+import { api } from '@/lib/api-client';
 import { supabase } from '@/lib/supabase';
 import {
-  AppointmentStatus,
-  CustomerAppointmentHistory,
-  CustomerDirectoryEntry,
+AppointmentStatus,
+CustomerAppointmentHistory,
+CustomerDirectoryEntry,
 } from '@/types';
+import { toDateStr,toTimeLabel } from './appointment-data';
 
 /**
  * Returns the first non-empty value among a list of plausible column names.
@@ -21,7 +23,7 @@ function pickValue(row: Record<string, unknown> | null | undefined, keys: string
 function numericPrice(value: unknown): number {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
   if (typeof value === 'string') {
-    const parsed = parseInt(value.replace(/[^0-9]/g, ''), 10);
+    const parsed = parseFloat(value.replace(/[^0-9.]/g, ''));
     return Number.isFinite(parsed) ? parsed : 0;
   }
   return 0;
@@ -79,16 +81,14 @@ function toLocalDate(value: unknown): string {
   if (!value) return '';
   const date = new Date(String(value));
   if (Number.isNaN(date.getTime())) return '';
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
-    date.getDate()
-  ).padStart(2, '0')}`;
+  return toDateStr(date.toISOString());
 }
 
 function toTime(value: unknown): string {
   if (!value) return '--:--';
   const date = new Date(String(value));
   if (Number.isNaN(date.getTime())) return '--:--';
-  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return toTimeLabel(date.toISOString());
 }
 
 function formatJoinDate(value: unknown): string {
@@ -116,6 +116,9 @@ interface AppointmentJoinRow {
   status?: string | null;
   payment_status?: string | null;
   notes?: string | null;
+  price_amount?: number;
+  deposit_amount?: number;
+  service_name_snapshot?: string;
   services?: { name?: string | null; price?: string | number | null } | null;
   staff_members?: { name?: string | null } | null;
 }
@@ -134,8 +137,8 @@ function buildHistory(
     .map((row) => ({
       id: row.id ?? '',
       serviceId: row.service_id ?? '',
-      serviceName: row.services?.name ?? 'Treatment',
-      servicePrice: numericPrice(row.services?.price),
+      serviceName: row.service_name_snapshot ?? row.services?.name ?? 'Treatment',
+      servicePrice: (row.price_amount ?? 0) / 100,
       specialistId: row.staff_id ?? '',
       specialistName: row.staff_members?.name ?? 'Team',
       date: toLocalDate(row.appointment_time),
@@ -148,19 +151,15 @@ function buildHistory(
 
 function normalizeCustomer(
   raw: Record<string, unknown>,
-  historyRows: AppointmentJoinRow[]
+  historyRows: AppointmentJoinRow[],
+  payments: {appointment_id:string;amount:number;refunded_amount:number}[]
 ): CustomerDirectoryEntry {
   const id = String(pickValue(raw, ['id']) ?? '');
   const history = buildHistory(historyRows, id);
   const completed = history.filter((item) => item.status === 'completed');
 
-  // Lifetime spend: prefer live derivation from completed treatments, then the
-  // declared total if the customers table happens to carry one.
-  const liveSpend = completed.reduce((sum, item) => sum + item.servicePrice, 0);
-  const declaredSpend = numericPrice(
-    pickValue(raw, ['total_spend', 'lifetime_spend', 'lifetime_value', 'total_value'])
-  );
-  const totalSpend = Math.max(liveSpend, declaredSpend);
+  const appointmentIds = new Set(history.map(a => a.id));
+  const totalSpend = payments.filter(p => appointmentIds.has(p.appointment_id)).reduce((sum,p) => sum + (p.amount - p.refunded_amount) / 100,0);
 
   return {
     id,
@@ -202,13 +201,14 @@ export interface CustomerDirectoryResult {
  */
 export async function fetchCustomersWithHistory(): Promise<CustomerDirectoryResult> {
   try {
-    const [customerRes, historyRes] = await Promise.all([
+    const [customerRes, historyRes, paymentRes] = await Promise.all([
       supabase.from('customers').select('*'),
       supabase
         .from('appointments')
         .select(
-          'id, customer_id, service_id, staff_id, appointment_time, status, payment_status, notes, services(name, price), staff_members(name)'
+          'id, customer_id, service_id, staff_id, appointment_time, status, payment_status, notes, price_amount, deposit_amount, service_name_snapshot, services(name, price), staff_members(name)'
         ),
+      supabase.from('payments').select('appointment_id,amount,refunded_amount'),
     ]);
 
     if (customerRes.error) throw customerRes.error;
@@ -217,23 +217,13 @@ export async function fetchCustomersWithHistory(): Promise<CustomerDirectoryResu
     const customers = (customerRes.data ?? []).map((row) =>
       normalizeCustomer(
         row as Record<string, unknown>,
-        (historyRes.data ?? []) as AppointmentJoinRow[]
+        (historyRes.data ?? []) as AppointmentJoinRow[],
+        paymentRes.data ?? []
       )
     );
 
     return { customers, error: null };
-  } catch (err) {
-    if (err && typeof err === 'object' && 'message' in err) {
-      console.error('Error loading customer directory:', {
-        message: (err as any).message,
-        details: (err as any).details,
-        hint: (err as any).hint,
-        code: (err as any).code,
-      });
-    } else {
-      console.error('Error loading customer directory:', err);
-    }
-  }
+  } catch { /* Safe, non-sensitive failure below. */ }
 
   return {
     customers: [],
@@ -247,12 +237,5 @@ export async function createCustomer(details: {
   email?: string;
   phone?: string;
 }): Promise<{ id: string }> {
-  const { data, error } = await supabase
-    .from('customers')
-    .insert([{ full_name: details.full_name.trim(), email: details.email?.trim() || null, phone: details.phone?.trim() || null }])
-    .select('id')
-    .single();
-
-  if (error) throw error;
-  return { id: data.id };
+  return api<{ id: string }>('/api/crm/customers', details);
 }

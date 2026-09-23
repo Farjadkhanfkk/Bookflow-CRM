@@ -1,22 +1,16 @@
 "use client";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import {
-  Search,
-  UserPlus,
-  ShieldAlert,
-  RefreshCw,
-  ChevronRight,
-  Users,
-  ArrowUpDown,
-  X,
-  Mail,
-  Phone,
-  Calendar,
-  DollarSign,
-  Sparkles,
-} from "lucide-react";
+import { createCustomer,fetchCustomersWithHistory } from "@/lib/customer-data";
 import { CustomerDirectoryEntry } from "@/types";
-import { fetchCustomersWithHistory, createCustomer } from "@/lib/customer-data";
+import {
+ChevronRight,
+RefreshCw,
+Search,
+ShieldAlert,
+UserPlus,
+Users,
+X
+} from "lucide-react";
+import React,{ useCallback,useEffect,useMemo,useState } from "react";
 import { CustomerDetailModal } from "./CustomerDetailModal";
 
 interface CustomersTabProps {
@@ -85,7 +79,8 @@ export const CustomersTab: React.FC<CustomersTabProps> = ({
   }, []);
 
   useEffect(() => {
-    loadCustomers();
+    const timer = window.setTimeout(() => { void loadCustomers(); }, 0);
+    return () => clearTimeout(timer);
   }, [loadCustomers]);
 
   const getLoyaltyTag = (customer: CustomerDirectoryEntry): string => {
@@ -113,15 +108,8 @@ export const CustomersTab: React.FC<CustomersTabProps> = ({
       setNewPhone("");
       setIsAddModalOpen(false);
       await loadCustomers();
-    } catch (err: any) {
-      console.error('Add customer error:', {
-        message: err?.message,
-        details: err?.details,
-        hint: err?.hint,
-        code: err?.code,
-        raw: err,
-      });
-      setAddError(err?.message || "Failed to add customer. Please try again.");
+    } catch (err) {
+      setAddError(err instanceof Error ? err.message : 'Customer could not be saved.');
     } finally {
       setAdding(false);
     }

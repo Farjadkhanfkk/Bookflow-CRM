@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function ExpiredPage() { return <main className="mx-auto max-w-xl p-8 space-y-5"><h1 className="text-3xl font-serif">Checkout was not completed</h1><p>No appointment is confirmed from this page. Unpaid reservations expire automatically. If payment was taken, use your confirmation link or contact the business before booking again.</p><Link className="action-button inline-block" href="/book">Check availability</Link></main>; }

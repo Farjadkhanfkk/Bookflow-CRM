@@ -1,18 +1,17 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import 'server-only';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables are not set.');
-}
 
 /**
  * Server-side Supabase client backed by the request cookie store.
  * Use this inside Server Components, Server Actions, and Route Handlers.
  */
 export async function createServerSupabaseClient() {
+  if (!supabaseUrl || !supabaseAnonKey) throw new Error('Authentication is not configured');
   const cookieStore = await cookies();
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {

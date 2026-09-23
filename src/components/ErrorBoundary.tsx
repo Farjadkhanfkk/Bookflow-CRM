@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component,ErrorInfo,ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -23,7 +23,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Booking modal error:', error, errorInfo);
+    // Render the recovery UI without logging customer data or component props.
+    void error; void errorInfo;
   }
 
   render() {

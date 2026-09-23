@@ -1,22 +1,22 @@
 "use client";
-import React, { useState } from 'react';
-import { Navbar } from '@/components/Navbar';
-import { Hero } from '@/components/Hero';
-import { SkinMatcher } from '@/components/SkinMatcher';
-import { FeaturedServices } from '@/components/FeaturedServices';
-import { WhyChooseUs } from '@/components/WhyChooseUs';
-import { TeamSection } from '@/components/TeamSection';
-import { SanctuarySection } from '@/components/SanctuarySection';
-import { ReviewsSection } from '@/components/ReviewsSection';
-import { LocationHours } from '@/components/LocationHours';
-import { FaqSection } from '@/components/FaqSection';
-import { Footer } from '@/components/Footer';
 import { BookingModal } from '@/components/BookingModal';
-import { ServiceDetailModal } from '@/components/ServiceDetailModal';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { FaqSection } from '@/components/FaqSection';
+import { FeaturedServices } from '@/components/FeaturedServices';
+import { Footer } from '@/components/Footer';
+import { Hero } from '@/components/Hero';
+import { LocationHours } from '@/components/LocationHours';
+import { Navbar } from '@/components/Navbar';
+import { ReviewsSection } from '@/components/ReviewsSection';
+import { SanctuarySection } from '@/components/SanctuarySection';
+import { ServiceDetailModal } from '@/components/ServiceDetailModal';
+import { SkinMatcher } from '@/components/SkinMatcher';
+import { TeamSection } from '@/components/TeamSection';
+import { WhyChooseUs } from '@/components/WhyChooseUs';
 import { Service } from '@/types';
+import { Calendar,LayoutDashboard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Sparkles, LayoutDashboard } from 'lucide-react';
+import { useState } from 'react';
 
 export default function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState<boolean>(false);

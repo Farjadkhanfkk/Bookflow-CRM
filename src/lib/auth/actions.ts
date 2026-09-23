@@ -1,7 +1,9 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { safeRedirect } from '@/lib/validation';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 export interface LoginState {
   error: string | null;
@@ -19,7 +21,7 @@ export async function login(
   const password = String(formData.get('password') ?? '');
   const next = String(formData.get('next') ?? '');
 
-  if (!email) return { error: 'Please enter your email address.' };
+  if (!z.string().email().max(254).safeParse(email).success) return { error: 'Please enter a valid email address.' };
   if (!password) return { error: 'Please enter your password.' };
 
   const supabase = await createServerSupabaseClient();
@@ -30,19 +32,18 @@ export async function login(
   });
 
   if (error) {
-    console.error('Supabase sign-in error:', error.message);
+
     return {
       error:
         error.message === 'Invalid login credentials'
           ? 'Incorrect email or password. Please try again.'
-          : error.message,
+          : 'Sign-in is unavailable. Please try again.',
     };
   }
 
-  // Only allow local, non-auth redirect targets.
-  const safeNext = next.startsWith('/') && !next.startsWith('//') && next !== '/login'
-    ? next
-    : '/dashboard';
+  const { data: member } = await supabase.from('business_members').select('role').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').eq('is_active', true).maybeSingle();
+  if (!member) { await supabase.auth.signOut(); return { error: 'This account does not have staff access.' }; }
+  const safeNext = safeRedirect(next);
 
   redirect(safeNext);
 }
@@ -55,7 +56,7 @@ export async function logout() {
   const { error } = await supabase.auth.signOut();
 
   if (error) {
-    console.error('Supabase sign-out error:', error.message);
+    throw new Error('Sign-out failed. Please try again.');
   }
 
   redirect('/login');

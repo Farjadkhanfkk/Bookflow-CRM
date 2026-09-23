@@ -1,4 +1,4 @@
-import { Service, TeamMember, Review, FaqItem } from '../types';
+import { FaqItem,Review,Service,TeamMember } from '../types';
 
 export const SPA_INFO = {
   name: "Lumina Med Spa",
@@ -14,10 +14,10 @@ export const SPA_INFO = {
     { days: "Sunday", hours: "10:00 AM – 4:00 PM (By Appointment)" }
   ],
   stats: {
-    clientsServed: "12,500+",
-    satisfactionRate: "99.4%",
-    yearsExperience: "18+",
-    doctorLed: "100%"
+    clientsServed: "Demo",
+    satisfactionRate: "Sample",
+    yearsExperience: "Concept",
+    doctorLed: "Sample"
   }
 };
 
@@ -68,7 +68,7 @@ export const SERVICES: Service[] = [
       "Smoothes rough texture and refines enlarged pores",
       "Includes take-home post-peel recovery serum kit"
     ],
-    image: "https://images.unsplash.com/photo-1512290903671-17adc8174f88?auto=format&fit=crop&w=1000&q=80",
+    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1000&q=80",
     popular: true,
     featured: true,
     procedureSteps: [
@@ -267,7 +267,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     credentials: "LE, CLT, Master HydraFacial Specialist",
     experience: "11+ Years Experience",
     bio: "Sarah is our celebrated master aesthetician with over a decade of clinical experience in medical peels, laser resurfacing, and stubborn pigment correction. Her holistic skin consultations have transformed thousands of complex acne and melasma conditions.",
-    avatar: "https://images.unsplash.com/photo-1594824813511-208cb21ec68a?auto=format&fit=crop&w=600&q=80",
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80",
     specialties: ["Platinum HydraFacial®", "Medical-Grade Chemical Peels", "RF Microneedling"],
     favoriteTreatment: "Triple Acid Glow & Infusion Peel",
     quote: "Healthy, luminous skin is built on cellular integrity, clinical actives, and meticulous barrier care.",

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, Sparkles, Phone } from 'lucide-react';
-import { FAQS, SPA_INFO } from '../data/spaData';
+import { ChevronDown,HelpCircle,Phone } from 'lucide-react';
+import React,{ useState } from 'react';
+import { FAQS,SPA_INFO } from '../data/spaData';
 
 export const FaqSection: React.FC = () => {
   const [openFaqId, setOpenFaqId] = useState<string | null>(FAQS[0]?.id || null);

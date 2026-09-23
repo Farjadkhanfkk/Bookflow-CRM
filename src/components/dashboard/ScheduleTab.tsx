@@ -1,17 +1,20 @@
 "use client";
-import React, { useState, useEffect, useMemo } from 'react';
+import { fetchBookingData,generateTimeSlots } from '@/lib/appointment-data';
+import { AppointmentStatus,CRMAppointment,TeamMember } from '@/types';
+import { formatInTimeZone } from 'date-fns-tz';
 import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  MapPin,
-  Search,
-  Loader2,
+ChevronLeft,
+ChevronRight,
+Loader2,
+MapPin,
+Plus,
+Search,
 } from 'lucide-react';
-import { CRMAppointment, AppointmentStatus, TeamMember } from '@/types';
-import { fetchBookingData, generateTimeSlots } from '@/lib/appointment-data';
+import React,{ useEffect,useMemo,useState } from 'react';
+import { MonthCalendar } from './MonthCalendar';
 
 interface ScheduleTabProps {
+  timezone?: string;
   appointments: CRMAppointment[];
   onSelectAppointment: (appointment: CRMAppointment) => void;
   onNewAppointment: (time?: string, specialistId?: string, date?: string) => void;
@@ -53,6 +56,7 @@ function timeToMinutes(time: string): number {
 }
 
 export const ScheduleTab: React.FC<ScheduleTabProps> = ({
+  timezone = 'America/Los_Angeles',
   appointments,
   onSelectAppointment,
   onNewAppointment,
@@ -63,11 +67,12 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [dayOffset, setDayOffset] = useState(0);
   const [staffMembers, setStaffMembers] = useState<TeamMember[]>([]);
+  const [staffError, setStaffError] = useState('');
   const [loadingStaff, setLoadingStaff] = useState(true);
 
   const timeSlots = useMemo(() => generateTimeSlots(), []);
 
-  const selectedDate = useMemo(() => addDays(new Date(), dayOffset), [dayOffset]);
+  const selectedDate = useMemo(() => addDays(new Date(formatInTimeZone(new Date(), timezone, 'yyyy-MM-dd') + 'T12:00:00'), dayOffset), [dayOffset, timezone]);
   const selectedDateStr = formatDateISO(selectedDate);
 
   const weekDays = useMemo(() => {
@@ -88,7 +93,7 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
   useEffect(() => {
     fetchBookingData()
       .then(({ staff }) => setStaffMembers(staff))
-      .catch(console.error)
+      .catch(() => setStaffError('Provider schedules could not be loaded.'))
       .finally(() => setLoadingStaff(false));
   }, []);
 
@@ -308,6 +313,8 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
         </div>
       </div>
 
+<MonthCalendar appointments={filteredAppointments} onSelect={onSelectAppointment}/>
+      {staffError && <p role="alert">{staffError}</p>}
       {/* Day View */}
       {viewMode === 'day' ? (
         <div className="bg-white rounded-2xl border border-[#F0EDE8] shadow-xs overflow-hidden">

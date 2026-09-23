@@ -1,4 +1,4 @@
-import { CRMAppointment, CRMPatient, QuickStatMetric, ClinicRoom } from '../types';
+import { ClinicRoom,CRMAppointment,CRMPatient,QuickStatMetric } from '../types';
 
 export const MOCK_QUICK_STATS: QuickStatMetric[] = [
   {

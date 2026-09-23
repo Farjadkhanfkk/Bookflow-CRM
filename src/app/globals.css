@@ -41,3 +41,14 @@ h1, h2, h3, .serif {
 ::-webkit-scrollbar-thumb:hover {
   background: #8B9D83;
 }
+
+/* Shared transactional forms keep the existing Lumina palette. */
+.booking-form label { display: block; font-size: .9rem; font-weight: 500; }
+.booking-form input:not([type=checkbox]), .booking-form select, .booking-form textarea { display: block; width: 100%; margin-top: .5rem; padding: .75rem; border: 1px solid #d6d3d1; border-radius: .75rem; background: white; color: #292524; }
+.booking-form .check-label { display: flex; align-items: start; flex-wrap: wrap; gap: .5rem; }
+.booking-form input[type=checkbox] { margin-top: .3rem; }
+.action-button { background: #4d6347; color: white; border-radius: 2rem; padding: .8rem 1.5rem; font-weight: 600; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+:focus-visible { outline: 3px solid #4d6347; outline-offset: 4px; }
+dialog::backdrop { backdrop-filter: blur(3px); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

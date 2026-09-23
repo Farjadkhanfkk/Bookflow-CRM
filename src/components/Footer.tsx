@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Sparkles, Phone, Mail, MapPin, ShieldCheck, Heart, ArrowRight, Check } from 'lucide-react';
+import { Mail,MapPin,Phone,Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
 import { SPA_INFO } from '../data/spaData';
 
 interface FooterProps {
@@ -7,17 +8,6 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setSubscribed(true);
-      setNewsletterEmail('');
-    }
-  };
-
   return (
     <footer id="footer" className="bg-[#1A1C1A] text-[#FDFCFB] pt-16 pb-12 border-t border-[#2D302E]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,41 +17,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
           <div className="lg:col-span-7 space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8B9D83]/15 text-[#8B9D83] text-xs font-semibold uppercase tracking-[0.2em] border border-[#8B9D83]/30">
               <Sparkles className="w-3.5 h-3.5" />
-              Lumina Privilege Club
+              Your next step
             </div>
             <h3 className="text-2xl sm:text-3xl font-light serif text-white">
-              Receive $50 Toward Your First Treatment
+              A conversation comes first
             </h3>
             <p className="text-xs sm:text-sm text-[#A5A29D] max-w-lg">
-              Join our private guest registry for physician skincare insights, seasonal treatment releases, and VIP appointment access.
+              Explore this fictional business through a sample consultation request. No discounts or vouchers are issued.
             </p>
           </div>
 
-          <div className="lg:col-span-5">
-            {subscribed ? (
-              <div className="bg-[#8B9D83]/20 border border-[#8B9D83] text-[#8B9D83] p-4 rounded-2xl flex items-center gap-2 text-xs font-medium">
-                <Check className="w-4 h-4 shrink-0" />
-                <span>Thank you! Your $50 welcome voucher has been dispatched to your inbox.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your email address"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="px-4 py-3 rounded-full bg-[#1A1C1A] border border-[#3D403D] text-xs sm:text-sm text-white placeholder:text-[#6B6E6B] focus:outline-hidden focus:border-[#8B9D83] flex-1"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 rounded-full bg-[#8B9D83] text-white text-xs font-medium hover:bg-[#7A8C72] transition-all whitespace-nowrap active:scale-98"
-                >
-                  Claim $50 Credit
-                </button>
-              </form>
-            )}
-          </div>
+          <div className="lg:col-span-5"><Link href="/contact" className="inline-block rounded-full bg-[#8B9D83] px-6 py-3 text-white">Request a consultation</Link></div>
         </div>
 
         {/* Main Footer Links & Information */}
@@ -118,7 +84,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
               <li><a href="#treatment-matcher" className="hover:text-white transition-colors">Skin Matcher</a></li>
               <li><a href="#why-us" className="hover:text-white transition-colors">Why Lumina</a></li>
               <li><a href="#team" className="hover:text-white transition-colors">Medical Team</a></li>
-              <li><a href="#reviews" className="hover:text-white transition-colors">Patient Results</a></li>
+              <li><a href="#reviews" className="hover:text-white transition-colors">Sample Reviews</a></li>
               <li><a href="#location" className="hover:text-white transition-colors">Location & Valet</a></li>
               <li><a href="#faq" className="hover:text-white transition-colors">FAQs & Policies</a></li>
             </ul>
@@ -158,14 +124,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
         {/* Bottom Legal, Disclaimer & Copyright */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#8B8D8B] text-center md:text-left">
           <p>
-            © {new Date().getFullYear()} Lumina Med Spa Inc. All rights reserved. Powered by BookFlow CRM.
+            © {new Date().getFullYear()} Lumina Med Spa · Portfolio concept. Powered by BookFlow CRM.
           </p>
           <div className="flex items-center gap-4">
-            <span>Physician Supervised Clinic</span>
+            <Link href="/privacy">Privacy notice</Link>
             <span>•</span>
-            <span>HIPAA Compliant</span>
+            <span>Portfolio Demonstration</span>
             <span>•</span>
-            <span>FDA-Cleared Devices</span>
+            <Link href="/booking-policy">Booking policy</Link>
           </div>
         </div>
 

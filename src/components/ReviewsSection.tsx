@@ -1,5 +1,5 @@
+import { CheckCircle,ShieldCheck,Sparkles,Star } from 'lucide-react';
 import React from 'react';
-import { Star, CheckCircle, Sparkles, MessageCircleHeart, ShieldCheck } from 'lucide-react';
 import { REVIEWS } from '../data/spaData';
 
 export const ReviewsSection: React.FC = () => {
@@ -11,7 +11,7 @@ export const ReviewsSection: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F5F7F4] text-[#8B9D83] text-xs font-semibold uppercase tracking-[0.2em] border border-[#F0EDE8]">
             <Star className="w-3.5 h-3.5 fill-[#8B9D83] text-[#8B9D83]" />
-            Verified Patient Outcomes
+            Sample Customer Stories
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light serif text-[#1A1C1A]">
             Loved by Over 12,000+ Clients
@@ -40,7 +40,7 @@ export const ReviewsSection: React.FC = () => {
                   {rev.verifiedBookFlow && (
                     <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#8B9D83] bg-[#F5F7F4] border border-[#F0EDE8] px-2.5 py-0.5 rounded-full">
                       <CheckCircle className="w-3 h-3 text-[#8B9D83]" />
-                      Verified BookFlow Visit
+                      Sample review · Not a real customer
                     </span>
                   )}
                 </div>
@@ -74,11 +74,11 @@ export const ReviewsSection: React.FC = () => {
           </span>
           <span className="hidden sm:inline text-[#D8D5D0]">•</span>
           <span className="flex items-center gap-1.5">
-            <Star className="w-4 h-4 text-[#8B9D83] fill-[#8B9D83]" /> 4.98 Google & Yelp Average
+            <Star className="w-4 h-4 text-[#8B9D83] fill-[#8B9D83]" /> Illustrative ratings only
           </span>
           <span className="hidden sm:inline text-[#D8D5D0]">•</span>
           <span className="flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-[#8B9D83]" /> HIPAA Compliant Records via BookFlow
+            <Sparkles className="w-4 h-4 text-[#8B9D83]" /> Demo records · No medical information
           </span>
         </div>
 

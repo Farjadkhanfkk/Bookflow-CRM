@@ -1,43 +1,49 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Plus,
-  ArrowLeft,
-  AlertCircle,
-  CheckCircle2,
-  RefreshCw,
-  Loader2,
-  LogOut
-} from 'lucide-react';
+import { api } from '@/lib/api-client';
 import { supabase } from '@/lib/supabase';
+import { formatInTimeZone } from 'date-fns-tz';
+import {
+AlertCircle,
+ArrowLeft,
+CheckCircle2,
+Loader2,
+LogOut,
+Plus,
+RefreshCw
+} from 'lucide-react';
+import React,{ useCallback,useEffect,useState } from 'react';
+import { OperationsTab } from './OperationsTab';
+import { ProviderTools } from './ProviderTools';
 
-import { DashboardSidebar, DashboardTab } from './DashboardSidebar';
+import { AppointmentStatus,CRMAppointment,CustomerDirectoryEntry,QuickStatMetric,TeamMember } from '../../types';
+import { AppointmentDetailDrawer } from './AppointmentDetailDrawer';
+import { AppointmentsListTab } from './AppointmentsListTab';
+import { CustomersTab } from './CustomersTab';
+import { DashboardSidebar,DashboardTab } from './DashboardSidebar';
+import { NewAppointmentModal } from './NewAppointmentModal';
 import { OverviewTab } from './OverviewTab';
 import { ScheduleTab } from './ScheduleTab';
-import { AppointmentsListTab } from './AppointmentsListTab';
 import { SettingsTab } from './SettingsTab';
-import { AppointmentDetailDrawer } from './AppointmentDetailDrawer';
-import { NewAppointmentModal } from './NewAppointmentModal';
-import { CustomersTab } from './CustomersTab';
-import { CRMAppointment, AppointmentStatus, QuickStatMetric, CustomerDirectoryEntry, TeamMember } from '../../types';
-import { toTimeLabel, computeEndTimeLabel } from '@/lib/appointment-data';
 
 interface StaffDashboardProps {
   onExitToPublicSite: () => void;
   onLogout?: () => Promise<void> | void;
   userEmail?: string;
+  role?: import('@/lib/validation').Role;
 }
 export const StaffDashboard: React.FC<StaffDashboardProps> = ({
   onExitToPublicSite,
   onLogout,
   userEmail,
+  role = 'staff',
 }) => {
-  const [activeTab, setActiveTab] = useState<DashboardTab>('dashboard');
+  const [activeTab, setActiveTab] = useState<DashboardTab>(role === 'staff' ? 'calendar' : 'dashboard');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [appointments, setAppointments] = useState<CRMAppointment[]>([]);
 
+  const [timezone, setTimezone] = useState('America/Los_Angeles');
   const [staffMembers, setStaffMembers] = useState<TeamMember[]>([]);
 
   const [stats, setStats] = useState<QuickStatMetric[]>([]);
@@ -49,11 +55,13 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
       let apts: CRMAppointment[] = [];
       let customerCount = 0;
 
-      const [aptRes, custRes, servRes, staffRes] = await Promise.all([
+      const [aptRes, custRes, servRes, staffRes, paymentRes, businessRes] = await Promise.all([
         supabase.from('appointments').select('*'),
         supabase.from('customers').select('*'),
         supabase.from('services').select('*'),
-        supabase.from('staff_members').select('*')
+        supabase.from('staff_members').select('*'),
+        supabase.from('payments').select('amount,refunded_amount'),
+        supabase.from('businesses').select('timezone').single()
       ]);
 
       if (aptRes.error) throw aptRes.error;
@@ -61,7 +69,9 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
       if (servRes.error) throw servRes.error;
       if (staffRes.error) throw staffRes.error;
 
-      setStaffMembers((staffRes.data || []).map((st: any) => ({
+      const businessTimezone = businessRes.data?.timezone ?? 'America/Los_Angeles';
+      setTimezone(businessTimezone);
+      setStaffMembers((staffRes.data || []).map((st) => ({
         id: st.id,
         name: st.name || st.full_name || 'Staff Member',
         title: st.title || '',
@@ -76,23 +86,22 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
         education: '',
       })));
 
-      const customerMap = new Map((custRes.data || []).map((c: any) => [c.id, c]));
-      const serviceMap = new Map((servRes.data || []).map((s: any) => [s.id, s]));
-      const staffMap = new Map((staffRes.data || []).map((st: any) => [st.id, st]));
+      const customerMap = new Map((custRes.data || []).map((c) => [c.id, c]));
+      const serviceMap = new Map((servRes.data || []).map((s) => [s.id, s]));
+      const staffMap = new Map((staffRes.data || []).map((st) => [st.id, st]));
 
-      apts = (aptRes.data || []).map((apt: any) => {
+      apts = (aptRes.data || []).map((apt) => {
         const cust = customerMap.get(apt.customer_id) || {};
         const serv = serviceMap.get(apt.service_id) || {};
         const staff = staffMap.get(apt.staff_id) || {};
 
-        const servicePrice = serv.price;
+        const servicePrice = apt.price_amount != null ? apt.price_amount / 100 : 0;
         const numericPrice = typeof servicePrice === 'number'
           ? servicePrice
-          : parseInt(String(servicePrice || '0').replace(/[^0-9]/g, ''), 10) || 0;
+          : parseFloat(String(servicePrice || '0').replace(/[^0-9.]/g, '')) || 0;
         const durationMinutes = apt.duration_minutes || 60;
-        const startTime = toTimeLabel(apt.appointment_time);
-        const aptDate = new Date(apt.appointment_time);
-        const localDate = `${aptDate.getFullYear()}-${String(aptDate.getMonth() + 1).padStart(2, '0')}-${String(aptDate.getDate()).padStart(2, '0')}`;
+        const startTime = formatInTimeZone(apt.appointment_time, businessTimezone, 'h:mm aa');
+        const localDate = formatInTimeZone(apt.appointment_time, businessTimezone, 'yyyy-MM-dd');
 
         return {
           id: apt.id,
@@ -107,11 +116,12 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
           specialistName: staff.name || staff.full_name || 'Staff Member',
           date: localDate,
           startTime,
-          endTime: computeEndTimeLabel(apt.appointment_time, durationMinutes),
+          endTime: formatInTimeZone(new Date(Date.parse(apt.appointment_time) + durationMinutes * 60000), businessTimezone, 'h:mm aa'),
           durationMinutes,
           room: 'Suite 300',
-          status: (apt.status as AppointmentStatus) || 'confirmed',
+          status: (String(apt.status).toLowerCase() as AppointmentStatus) || 'confirmed',
           price: numericPrice,
+          depositAmount: (apt.deposit_amount ?? 0) / 100,
           paymentStatus: (apt.payment_status as CRMAppointment['paymentStatus']) || 'pending',
           notes: apt.notes || undefined,
           intakeFormCompleted: false
@@ -121,31 +131,21 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
       customerCount = (custRes.data || []).length;
       setAppointments(apts);
 
-      const revenue = apts
-        .filter(a => a.status === 'completed')
-        .reduce((sum, a) => sum + a.price, 0);
+      const revenue = (paymentRes.data ?? []).reduce((sum, p) => sum + (p.amount - p.refunded_amount) / 100, 0);
       const pendingRevenue = apts
         .filter(a => a.paymentStatus === 'pending')
         .reduce((sum, a) => sum + a.price, 0);
       const activeSessions = apts.filter(a => a.status === 'in_progress' || a.status === 'checked_in').length;
 
       setStats([
-        { id: 'revenue', title: 'Total Revenue', value: `$${revenue.toLocaleString()}`, change: '+12.5%', isPositive: true, subtext: 'From completed treatments', iconName: 'DollarSign' },
-        { id: 'active-customers', title: 'Customers', value: customerCount.toLocaleString(), change: '+2.1%', isPositive: true, subtext: 'Registered & active', iconName: 'UserCheck' },
-        { id: 'appointments-total', title: 'Appointments', value: apts.length.toLocaleString(), change: '+4.8%', isPositive: true, subtext: 'Lifetime total', iconName: 'Calendar' },
-        { id: 'pending-payment', title: 'Pending Payment', value: `$${pendingRevenue.toLocaleString()}`, change: '0%', isPositive: pendingRevenue === 0, subtext: 'Open invoices', iconName: 'CreditCard' },
-        { id: 'active-sessions', title: 'Active Sessions', value: activeSessions.toLocaleString(), change: '0%', isPositive: true, subtext: 'Right now', iconName: 'Activity' },
+        { id: 'revenue', title: 'Total Revenue', value: `$${revenue.toLocaleString()}`, change: '', isPositive: true, subtext: 'Captured payments less refunds', iconName: 'DollarSign' },
+        { id: 'active-customers', title: 'Customers', value: customerCount.toLocaleString(), change: '', isPositive: true, subtext: 'Registered & active', iconName: 'UserCheck' },
+        { id: 'appointments-total', title: 'Appointments', value: apts.length.toLocaleString(), change: '', isPositive: true, subtext: 'Lifetime total', iconName: 'Calendar' },
+        { id: 'pending-payment', title: 'Pending Payment', value: `$${pendingRevenue.toLocaleString()}`, change: '', isPositive: pendingRevenue === 0, subtext: 'Open invoices', iconName: 'CreditCard' },
+        { id: 'active-sessions', title: 'Active Sessions', value: activeSessions.toLocaleString(), change: '', isPositive: true, subtext: 'Right now', iconName: 'Activity' },
       ]);
-     } catch (err: any) {
-      console.error('Raw error loading dashboard data:', err);
-      console.error('Error stringified:', JSON.stringify(err, Object.getOwnPropertyNames(err || {})));
-      if (err && typeof err === 'object' && 'message' in err) {
-        setError((err as any).message || 'We could not load your dashboard data. Please check your connection and retry.');
-      } else if (err instanceof Error) {
-        setError(err.message || 'We could not load your dashboard data. Please check your connection and retry.');
-      } else {
-        setError('We could not load your dashboard data. Please check your connection and retry.');
-      }
+     } catch {
+      setError('We could not load your dashboard data. Please check configuration and access.');
       setAppointments([]);
       setStats([]);
     } finally {
@@ -154,29 +154,28 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
   }, []);
 
   useEffect(() => {
-    loadDashboardData();
+    const initialLoad = window.setTimeout(() => { void loadDashboardData(); }, 0);
 
     const channel = supabase
       .channel('dashboard-realtime-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'appointments' },
-        (payload) => {
-          console.log('Realtime Appointment Change:', payload);
+        () => {
           loadDashboardData();
         }
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'customers' },
-        (payload) => {
-          console.log('Realtime Customer Change:', payload);
+        () => {
           loadDashboardData();
         }
       )
       .subscribe();
 
     return () => {
+      clearTimeout(initialLoad);
       supabase.removeChannel(channel);
     };
   }, [loadDashboardData]);
@@ -196,45 +195,16 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
 
   const handleUpdateStatus = async (appointmentId: string, newStatus: AppointmentStatus) => {
     try {
-      const { error } = await supabase
-        .from('appointments')
-        .update({ status: newStatus, payment_status: newStatus === 'completed' ? 'paid' : undefined })
-        .eq('id', appointmentId);
-
-      if (error) throw error;
-
-      setAppointments(prev => prev.map(a => {
-        if (a.id === appointmentId) {
-          return {
-            ...a,
-            status: newStatus,
-            paymentStatus: newStatus === 'completed' ? 'paid' : a.paymentStatus
-          };
-        }
-        return a;
-      }));
-
-      if (selectedAppointment && selectedAppointment.id === appointmentId) {
-        setSelectedAppointment(prev => prev ? {
-          ...prev,
-          status: newStatus,
-          paymentStatus: newStatus === 'completed' ? 'paid' : prev.paymentStatus
-        } : null);
-      }
-
-      showToast(`Appointment status updated to ${newStatus.replace('_', ' ').toUpperCase()}`);
-      loadDashboardData();
-    } catch (err) {
-      console.error('Error updating status:', err);
-      showToast('Failed to update status');
-    }
+      await api('/api/crm/appointments', { id: appointmentId, status: newStatus });
+      setSelectedAppointment(prev => prev?.id === appointmentId ? { ...prev, status: newStatus } : prev);
+      showToast('Appointment status saved.');
+      await loadDashboardData();
+    } catch (e) { showToast(e instanceof Error ? e.message : 'Status could not be saved.'); }
   };
-
-  const handleUpdateNotes = (appointmentId: string, notes: string) => {
-    setAppointments(prev => prev.map(a => a.id === appointmentId ? { ...a, notes } : a));
-    if (selectedAppointment && selectedAppointment.id === appointmentId) {
-      setSelectedAppointment(prev => prev ? { ...prev, notes } : null);
-    }
+  const handleUpdateNotes = async (appointmentId: string, notes: string) => {
+    await api('/api/crm/appointments', { id: appointmentId, notes });
+    setSelectedAppointment(prev => prev?.id === appointmentId ? { ...prev, notes } : prev);
+    await loadDashboardData();
   };
 
   const handleAddAppointmentSuccess = () => {
@@ -270,7 +240,8 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
         await onLogout();
       }
     } catch (err) {
-      console.error('Error signing out:', err);
+      showToast('Sign-out failed. Please try again.');
+      void err;
       showToast('Failed to sign out. Please try again.');
     }
   };
@@ -279,6 +250,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
     <div id="staff-dashboard-root" className="min-h-screen bg-[#FDFCFB] text-[#2D302E] flex">
       {/* 1. Sleek Modern Sidebar Navigation */}
       <DashboardSidebar
+        role={role}
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}
         onExitToPublicSite={onExitToPublicSite}
@@ -287,13 +259,14 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
 
       {/* 2. Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto max-h-screen">
+        <p className="px-4 py-2 text-xs text-stone-600">Schedule timezone: {timezone}</p>
         
         {/* Top Sticky CRM Navigation Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-6 py-3.5 border-b border-[#F0EDE8] flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-3 sm:px-6 py-3.5 border-b border-[#F0EDE8] flex items-center justify-between gap-4">
           
           {/* Left Breadcrumbs / Current View */}
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8B9D83]">
+            <span className="hidden sm:inline text-xs font-semibold uppercase tracking-[0.2em] text-[#8B9D83]">
               Lumina Med Spa
             </span>
             <span className="text-[#D8CEC0] text-xs">/</span>
@@ -382,8 +355,10 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
             />
           )}
 
+          {activeTab === 'calendar' && <ProviderTools />}
           {activeTab === 'calendar' && (
             <ScheduleTab
+              timezone={timezone}
               appointments={appointments}
               onSelectAppointment={(apt) => setSelectedAppointment(apt)}
               onNewAppointment={handleOpenNewAppointment}
@@ -408,8 +383,9 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
             />
           )}
 
+          {(['leads','tasks','reports'] as string[]).includes(activeTab) && <OperationsTab resource={activeTab as 'leads' | 'tasks' | 'reports'} />}
           {activeTab === 'settings' && (
-            <SettingsTab staffMembers={staffMembers} />
+            <SettingsTab />
           )}
             </>
           )}
@@ -417,12 +393,13 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
       </div>
 
       {/* Appointment Detail Flyout Drawer */}
-      <AppointmentDetailDrawer
+      {selectedAppointment && <AppointmentDetailDrawer
+        key={selectedAppointment.id}
         appointment={selectedAppointment}
         onClose={() => setSelectedAppointment(null)}
         onUpdateStatus={handleUpdateStatus}
         onUpdateNotes={handleUpdateNotes}
-      />
+      />}
 
       {/* New Appointment Modal */}
       <NewAppointmentModal

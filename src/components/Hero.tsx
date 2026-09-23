@@ -1,6 +1,6 @@
+import { ArrowRight,Calendar,Heart,Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
-import { Calendar, ShieldCheck, Sparkles, Star, Clock, CheckCircle2, ArrowRight, UserCheck, Heart } from 'lucide-react';
-import { SPA_INFO } from '../data/spaData';
 
 interface HeroProps {
   onOpenBooking: (serviceId?: string, specialistId?: string) => void;
@@ -26,7 +26,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               </span>
               <span className="text-[#8B8D8B] text-xs">•</span>
               <span className="text-xs font-medium text-[#6B6E6B]">
-                4.98 ★ (850+ Reviews)
+                Portfolio concept · Sample business
               </span>
             </div>
 
@@ -73,7 +73,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 <div className="w-9 h-9 rounded-full border-2 border-white bg-[#C5C2BD] flex items-center justify-center text-[10px] font-semibold text-[#2D302E]">LS</div>
               </div>
               <p className="text-xs text-[#8B8D8B]">
-                Joined by <span className="text-[#2D302E] font-semibold">500+</span> happy clients this month
+                Explore a sample appointment booking experience
               </p>
             </div>
 
@@ -85,7 +85,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               
               {/* Main Visual Image Card */}
               <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-stone-100 border border-stone-200/60">
-                <img
+                <Image loading="eager" width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
                   alt="Lumina Med Spa"
                   referrerPolicy="no-referrer"
@@ -112,7 +112,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
 
               {/* Top-Left Floating Badge: Dr. Emma Harrison */}
               <div className="absolute -top-4 -left-4 sm:-left-6 z-20 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-stone-100 flex items-center gap-3">
-                <img
+                <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=200&q=80"
                   alt="Dr. Emma Harrison"
                   referrerPolicy="no-referrer"

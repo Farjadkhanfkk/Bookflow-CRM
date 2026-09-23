@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Phone, Calendar, Menu, X, Clock, ShieldCheck, LayoutDashboard } from 'lucide-react';
+import { Calendar,LayoutDashboard,Menu,Phone,ShieldCheck,Sparkles,X } from 'lucide-react';
+import React,{ useEffect,useState } from 'react';
 import { SPA_INFO } from '../data/spaData';
 
 interface NavbarProps {

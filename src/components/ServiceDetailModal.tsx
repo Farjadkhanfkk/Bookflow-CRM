@@ -1,5 +1,7 @@
+import { useDialogFocus } from '@/components/useDialogFocus';
+import { ArrowRight,Calendar,Check,Layers,Sparkles,X } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
-import { X, Clock, ShieldCheck, Check, Sparkles, Calendar, ArrowRight, Layers, AlertCircle } from 'lucide-react';
 import { Service } from '../types';
 
 interface ServiceDetailModalProps {
@@ -13,10 +15,11 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   onClose,
   onBookService,
 }) => {
+  const dialogRef = useDialogFocus(!!service, onClose);
   if (!service) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Details" className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
       <div 
         className="relative bg-[#FDFCFB] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#F0EDE8] shadow-2xl animate-in zoom-in-95 duration-200"
         role="dialog"
@@ -34,7 +37,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
         {/* Top Image Banner */}
         <div className="relative aspect-16/9 bg-stone-100 overflow-hidden">
-          <img
+          <Image width={800} height={600} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             src={service.image}
             alt={service.name}
             referrerPolicy="no-referrer"

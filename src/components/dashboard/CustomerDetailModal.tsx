@@ -1,8 +1,11 @@
 'use client';
+import { useDialogFocus } from '@/components/useDialogFocus';
+import { CustomerRecordPanel } from './CustomerRecordPanel';
 
-import React from 'react';
-import { X, Phone, Mail, Calendar, DollarSign, Sparkles, Plus, ShieldAlert, CheckCircle2 } from 'lucide-react';
+
 import { CustomerDirectoryEntry } from '@/types';
+import { Calendar,CheckCircle2,DollarSign,Mail,Phone,Plus,Sparkles,X } from 'lucide-react';
+import React from 'react';
 
 interface CustomerDetailModalProps {
   customer: CustomerDirectoryEntry | null;
@@ -58,19 +61,18 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
   onClose,
   onNewBooking,
 }) => {
+  const dialogRef = useDialogFocus(!!customer, onClose);
   if (!customer) return null;
 
   const totalSpend =
-    customer.appointmentHistory
-      .filter((item) => item.status === 'completed')
-      .reduce((sum, item) => sum + item.servicePrice, 0) || customer.totalSpend;
+    customer.totalSpend;
   const completedTreatments = customer.appointmentHistory.filter(
     (item) => item.status === 'completed'
   ).length;
   const totalBookings = customer.appointmentHistory.length;
 
   return (
-    <div
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Customer details"
       className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-4"
       onClick={onClose}
     >
@@ -248,6 +250,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
             </button>
           )}
         </div>
+        <CustomerRecordPanel id={customer.id}/>
       </div>
     </div>
   );

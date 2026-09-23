@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
+import { Cormorant_Garamond,Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -19,10 +19,10 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "Lumina Med Spa | Advanced Clinical Aesthetics & Wellness",
-  description: "Experience bespoke aesthetic medicine, advanced clinical skincare, and restorative wellness curated by board-certified physicians. Powered by BookFlow CRM.",
+  description: "A fictional med-spa website and appointment booking portfolio concept powered by BookFlow CRM.",
   openGraph: {
     title: "Lumina Med Spa | Advanced Clinical Aesthetics",
-    description: "Premium, physician-led aesthetic treatments in a serene boutique sanctuary.",
+    description: "Explore a fictional med-spa booking and CRM portfolio concept.",
     type: "website",
   },
 };
@@ -38,6 +38,7 @@ export default function RootLayout({
       className={`${plusJakarta.variable} ${cormorant.variable} scroll-smooth h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#FDFCFB] text-[#2D302E] selection:bg-[#8B9D83]/20 selection:text-[#1A1C1A]">
+        <div className="bg-[#263c2c] px-4 py-2 text-center text-xs text-white">Portfolio concept · Fictional business, providers, treatments, and reviews. Use test details only.</div>
         {children}
       </body>
     </html>

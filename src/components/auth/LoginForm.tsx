@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useActionState, useState } from 'react';
-import Link from 'next/link';
-import {
-  ArrowLeft,
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  Mail,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
-import { login } from '@/lib/auth/actions';
 import type { LoginState } from '@/lib/auth/actions';
+import { login } from '@/lib/auth/actions';
+import {
+ArrowLeft,
+Eye,
+EyeOff,
+Loader2,
+Lock,
+Mail,
+ShieldCheck,
+Sparkles,
+} from 'lucide-react';
+import Link from 'next/link';
+import React,{ useActionState,useState } from 'react';
 
 const initialLoginState: LoginState = { error: null };
 
@@ -129,6 +129,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ nextUrl = '/dashboard' }) 
                 <span>{state.error}</span>
               </div>
             )}
+<Link href="/forgot-password" className="block text-sm underline">Forgot password?</Link>
 {/* Submit */}
             <button
               type="submit"
