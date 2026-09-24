@@ -1,0 +1,14 @@
+'use client';
+import { api } from '@/lib/api-client';
+import { formatInTimeZone } from 'date-fns-tz';
+import { useEffect, useState } from 'react';
+type Schedule={linked:boolean;timezone:string;blocks:{id:string;starts_at:string;ends_at:string;reason:string}[]};
+export function MyAvailability(){
+ const [schedule,setSchedule]=useState<Schedule|null>(null);const [message,setMessage]=useState('');const [error,setError]=useState('');const [busy,setBusy]=useState(false);const [revision,setRevision]=useState(0);
+ useEffect(()=>{let active=true;api<Schedule>('/api/my-schedule').then(r=>{if(active)setSchedule(r);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[revision]);
+ async function save(input:unknown){setBusy(true);setError('');try{const r=await api<{conflicts:number}>('/api/my-schedule',input);setMessage(r.conflicts?`Availability updated. ${r.conflicts} existing appointment(s) need admin review. They have not been cancelled.`:'Availability updated.');setRevision(v=>v+1);}catch(e){setError(e instanceof Error?e.message:'Save failed.');}finally{setBusy(false);}}
+ if(schedule&&!schedule.linked)return null;
+ return <details className="rounded-xl border bg-white p-4 my-4 booking-form"><summary className="cursor-pointer text-sm font-semibold">My availability — mark not available</summary>{error&&<p role="alert" className="text-red-800">{error}</p>}{message&&<p role="status">{message}</p>}
+ {schedule&&<><p className="text-sm my-3">Block whole days in {schedule.timezone}. New bookings are blocked immediately. Existing appointments stay on your schedule and the admin is notified to review them.</p><form className="space-y-3" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);void save({action:'add',from:f.get('from'),through:f.get('through'),reason:f.get('reason')});}}><label>First unavailable day<input type="date" name="from" min={formatInTimeZone(new Date(),schedule.timezone,'yyyy-MM-dd')} required/></label><label>Last unavailable day (inclusive)<input type="date" name="through" min={formatInTimeZone(new Date(),schedule.timezone,'yyyy-MM-dd')} required/></label><label>Reason (optional)<input name="reason" maxLength={500}/></label><button disabled={busy} className="action-button">Mark not available</button></form><ul className="space-y-2 my-4">{schedule.blocks.map(b=><li className="border rounded-lg p-3" key={b.id}><p>{formatInTimeZone(b.starts_at,schedule.timezone,'MMM d, yyyy HH:mm')} – {formatInTimeZone(b.ends_at,schedule.timezone,'MMM d, yyyy HH:mm')}</p><p className="text-sm">{b.reason}</p><button disabled={busy} className="underline text-sm" onClick={()=>void save({action:'remove',id:b.id})}>Remove time off</button></li>)}</ul><form action="/api/google/connect" method="get"><button className="underline text-sm">Connect my Google Calendar</button></form></>}
+ </details>;
+}

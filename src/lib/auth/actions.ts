@@ -41,8 +41,9 @@ export async function login(
     };
   }
 
-  const { data: member } = await supabase.from('business_members').select('role').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').eq('is_active', true).maybeSingle();
-  if (!member) { await supabase.auth.signOut(); return { error: 'This account does not have staff access.' }; }
+  const { data: member, error: membershipError } = await supabase.from('business_members').select('role').eq('user_id', (await supabase.auth.getUser()).data.user?.id ?? '').eq('is_active', true).maybeSingle();
+  if (membershipError) { await supabase.auth.signOut(); return { error: 'Your login is valid, but staff permissions could not be loaded. Ask the administrator to check database setup.' }; }
+  if (!member) { await supabase.auth.signOut(); return { error: 'Your login is valid, but no active business role is assigned. Ask your administrator to add you under Team and access.' }; }
   const safeNext = safeRedirect(next);
 
   redirect(safeNext);

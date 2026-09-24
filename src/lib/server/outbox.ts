@@ -6,7 +6,7 @@ import { DeliveryUncertain,email,googleAccess,notifyN8n,providerFetch,sms,whatsa
 import { manageToken } from './security';
 
 type Appointment={id:string;staff_id:string;customer_id:string;appointment_time:string;duration_minutes:number;status:string;service_name_snapshot:string;business_id:string};
-type Job={id:string;appointment_id:string|null;hold_id:string|null;event_type:string;channel:string;idempotency_key:string;attempts:number;created_at:string};
+type Job={recipient_user_id?:string|null;id:string;appointment_id:string|null;hold_id:string|null;event_type:string;channel:string;idempotency_key:string;attempts:number;created_at:string};
 async function syncCalendar(a:Appointment){
  const db=adminDb();const {data:old,error}=await db.from('appointment_calendar_events').select('*').eq('appointment_id',a.id).maybeSingle();if(error)throw error;
  if(old&&(old.staff_id!==a.staff_id||a.status==='cancelled')){
@@ -35,6 +35,15 @@ export async function deliverJob(job:Job):Promise<{status:'sent'|'skipped';provi
  }
  if(!job.appointment_id)throw new Error('Missing appointment');
  const {data:a,error}=await db.from('appointments').select('id,staff_id,customer_id,appointment_time,duration_minutes,status,service_name_snapshot,business_id').eq('id',job.appointment_id).single();if(error)throw error;
+ if(job.channel==='staff_email'){
+  if(!job.recipient_user_id)return {status:'skipped'};
+  const {data:recipient,error:memberError}=await db.from('business_members').select('role,staff_id').eq('user_id',job.recipient_user_id).eq('business_id',a.business_id).eq('is_active',true).maybeSingle();
+  if(memberError)throw memberError;if(!recipient)return {status:'skipped'};
+  const {data:account,error:accountError}=await db.auth.admin.getUserById(job.recipient_user_id);if(accountError)throw accountError;if(!account.user.email)return {status:'skipped'};
+  if(Date.now()-Date.parse(job.created_at)>23*3600000&&job.attempts>1)throw new DeliveryUncertain('Email idempotency window requires review');
+  const message=`Your Lumina staff schedule has changed. Sign in to review your appointments: ${config().APP_URL}/dashboard`;
+  return {status:'sent',providerId:await email(account.user.email,message,job.idempotency_key)};
+ }
  if(job.event_type==='reminder'&&(a.status!=='confirmed'||Date.parse(a.appointment_time)<=Date.now()))return {status:'skipped'};
  if(job.channel==='google'){await syncCalendar(a);return {status:'sent'};}
  if(job.channel==='n8n'){await notifyN8n(job.id,job.event_type,a.id);return {status:'sent'};}

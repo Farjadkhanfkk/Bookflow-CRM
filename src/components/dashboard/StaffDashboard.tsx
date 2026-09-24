@@ -14,6 +14,7 @@ RefreshCw
 import React,{ useCallback,useEffect,useState } from 'react';
 import { OperationsTab } from './OperationsTab';
 import { ProviderTools } from './ProviderTools';
+import { StaffInbox } from './StaffInbox';
 
 import { AppointmentStatus,CRMAppointment,CustomerDirectoryEntry,QuickStatMetric,TeamMember } from '../../types';
 import { AppointmentDetailDrawer } from './AppointmentDetailDrawer';
@@ -319,6 +320,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({
 
         {/* Dynamic Tab Body */}
         <main className="p-6 flex-1 min-w-0">
+          <StaffInbox onAppointment={id => { const appointment = appointments.find(a => a.id === id); if (appointment) setSelectedAppointment(appointment); else { setActiveTab('appointments'); void loadDashboardData(); } }} />
           {error && !loading && (
             <div className="mb-5 flex items-center justify-between gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
               <div className="flex items-center gap-2 text-xs text-red-700">

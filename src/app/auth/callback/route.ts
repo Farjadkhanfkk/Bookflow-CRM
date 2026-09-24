@@ -5,7 +5,7 @@ export async function GET(request:Request){
  const target=new URL('/reset-password',request.url);
  try{
   const db=await createServerSupabaseClient();
-  const result=code?await db.auth.exchangeCodeForSession(code):tokenHash&&url.searchParams.get('type')==='recovery'?await db.auth.verifyOtp({token_hash:tokenHash,type:'recovery'}):null;
+  const result=code?await db.auth.exchangeCodeForSession(code):tokenHash&&['recovery','invite'].includes(url.searchParams.get('type')??'')?await db.auth.verifyOtp({token_hash:tokenHash,type:url.searchParams.get('type') as 'recovery'|'invite'}):null;
   if(!result||result.error)target.searchParams.set('error','expired');
  }catch{target.searchParams.set('error','expired');}
  return NextResponse.redirect(target);
